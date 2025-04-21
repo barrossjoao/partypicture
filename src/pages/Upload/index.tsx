@@ -5,6 +5,7 @@ import type { UploadProps } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../../api/supabaseClient";
 import { useParams } from "react-router-dom";
+import imageCompression from 'browser-image-compression';
 
 const { Title } = Typography;
 
@@ -36,6 +37,17 @@ const UploadPage: React.FC = () => {
     fetchEvent();
   }, [slug]);
 
+
+  const handleImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/jpeg',
+    };
+    return await imageCompression(file, options);
+  };
+
   const handleUpload: UploadProps["customRequest"] = async ({
     file,
     onSuccess,
@@ -47,9 +59,12 @@ const UploadPage: React.FC = () => {
     const typedFile = file as File;
     const fileName = `${uuidv4()}-${typedFile.name}`;
 
-    const {  error } = await supabase.storage
+
+    const compressedFile = await handleImage(typedFile);
+
+    const { error } = await supabase.storage
       .from("event-photos")
-      .upload(fileName, file);
+      .upload(fileName, compressedFile);
 
     if (error) {
       message.error("Erro ao fazer upload");
