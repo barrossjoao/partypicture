@@ -1,0 +1,36 @@
+.layoutContainer {
+  display: flex;
+}
+
+.content {
+  transition: margin-left 0.3s ease;
+  flex: 1;
+  margin-left: 40px;
+  margin-right: 20px;
+}
+
+.conditions {
+  text-align: justify;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  word-break: break-word;
+  max-width: 100%;
+  white-space: pre-line;
+}
+
+.contentShift {
+  margin-left: 270px;
+  margin-right: 20px;
+}
+
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .contentShift {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

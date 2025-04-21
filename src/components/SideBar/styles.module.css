@@ -1,0 +1,168 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  color: white;
+  padding: 20px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.toggle-button-wrapper {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-button-wrapper.closed {
+  left: 15px;
+}
+
+.toggle-button {
+  cursor: pointer;
+}
+
+.notifications {
+  margin-left: 180px;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+  margin-left: 10px;
+  color: #000;
+  cursor: pointer;
+}
+
+.itemMenu {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+
+.userProfile {
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  max-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.userName {
+  font-size: 17px;
+  color: black;
+  font-weight: bold;
+}
+
+.languageSwitcher {
+  margin-left: 40px;
+}
+
+.select{
+  width: 120;
+}
+
+/* === Media Queries para telas menores === */
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px; 
+    padding: 15px;
+  }
+
+  .toggle-button-wrapper {
+    top: 15px;
+    left: 15px;
+  }
+
+  .title {
+    font-size: 1.2rem; 
+    margin-bottom: 30px;
+    margin-left: 5px;
+  }
+
+  .itemMenu {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    margin-left: 5px;
+  }
+
+  .userProfile {
+    position: static;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+  }
+
+  .userAvatar {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    margin-right: 0;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .userName {
+    font-size: 15px;
+  }
+}
+
+/* Telas menores que 480px */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 180px; 
+    padding: 10px;
+  }
+
+  .title {
+    font-size: 1rem; 
+    margin-bottom: 20px;
+  }
+
+  .itemMenu {
+    font-size: 0.8rem; 
+    margin-bottom: 10px;
+  }
+
+  .userAvatar {
+    width: 25px; 
+    height: 25px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .userName {
+    font-size: 13px; 
+  }
+}
