@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Typography, message } from "antd";
+import { Button, Form, Input, Typography, notification } from "antd";
 import { supabase } from "../../api/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import QRCode from "react-qr-code";
@@ -10,6 +10,7 @@ const CreateEventPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
   const [, setSlugCreated] = useState<string | null>(null);
+  const [api, contextHolder] = notification.useNotification();
 
   const onFinish = async (values: { name: string; slug: string }) => {
     setLoading(true);
@@ -25,10 +26,18 @@ const CreateEventPage: React.FC = () => {
     });
 
     if (error) {
-      message.error("Erro ao criar evento");
+      api.error({
+        message: "Erro ao criar evento",
+        description: "Não foi possível salvar o evento. Tente novamente.",
+      });
       console.error(error);
     } else {
-      message.success("Evento criado com sucesso!");
+      api.success({
+        message: "Evento criado com sucesso!",
+        description: "O QR Code e o link de upload já estão prontos!",
+      });
+      
+      console.log(`Evento criado com sucesso: ${values.name}`);
       setUploadUrl(uploadLink);
       setSlugCreated(slug);
     }
@@ -37,6 +46,8 @@ const CreateEventPage: React.FC = () => {
   };
 
   return (
+    <>
+    {contextHolder}
     <div style={{ maxWidth: 500, margin: "0 auto", padding: 24, textAlign: "center" }}>
       <Title level={3}>Criar Evento 🎊</Title>
       <Form layout="vertical" onFinish={onFinish}>
@@ -74,6 +85,7 @@ const CreateEventPage: React.FC = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
