@@ -3,7 +3,7 @@ import { Button, Form, Input, Typography, notification } from "antd";
 import { supabase } from "../../api/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import QRCode from "react-qr-code";
-
+import { useUser } from "../../context/UserContext";
 const { Title, Paragraph } = Typography;
 
 const CreateEventPage: React.FC = () => {
@@ -11,7 +11,7 @@ const CreateEventPage: React.FC = () => {
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
   const [, setSlugCreated] = useState<string | null>(null);
   const [api, contextHolder] = notification.useNotification();
-
+  const { user } = useUser();
   const onFinish = async (values: { name: string; slug: string }) => {
     setLoading(true);
 
@@ -23,6 +23,7 @@ const CreateEventPage: React.FC = () => {
       name: values.name,
       slug,
       upload_url: uploadLink,
+      company_id: user?.company_id,
     });
 
     if (error) {

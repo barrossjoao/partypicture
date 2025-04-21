@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "../../api/supabaseClient";
 import { Card, List, Typography, Spin } from "antd";
 import { Link } from "react-router-dom";
+import { getEventsByCompanyId } from "../../api/Events";
+import { useUser } from "../../context/UserContext";
 
 const { Title } = Typography;
 
@@ -14,31 +15,30 @@ interface Event {
 const Home: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchEvents = async () => {
-    const { data, error } = await supabase
-      .from("events")
-      .select("id, name, slug")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Erro ao buscar eventos:", error);
-    } else {
-      setEvents(data || []);
-    }
-
-    setLoading(false);
-  };
+  const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
+    if (user && user.company_id) {
+      const fetchEvents = async () => {
+        try {
+          const data = await getEventsByCompanyId(user.company_id);
+          setEvents(data);
+        } catch (error) {
+          console.error("Erro ao buscar eventos:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }
+  }, [user]);
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
       <Title level={2}>Eventos Criados</Title>
 
-      {loading ? (
+      {userLoading || loading ? (
         <Spin />
       ) : events.length === 0 ? (
         <p>Nenhum evento criado ainda.</p>

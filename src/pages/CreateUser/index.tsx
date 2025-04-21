@@ -137,8 +137,8 @@ const CreateUserPage: React.FC = () => {
             rules={[{ required: true, message: "Selecione a função" }]}
           >
             <Select placeholder="Escolha o tipo de usuário">
-              <Option value="company_user">Usuário</Option>
-              <Option value="company_admin">Admin da empresa</Option>
+              <Option value="user">Usuário</Option>
+              <Option value="admin">Admin da empresa</Option>
             </Select>
           </Form.Item>
 
