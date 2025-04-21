@@ -31,8 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     try {
       await supabase.auth.signOut();
       setUserName(null);
-      localStorage.removeItem("hasSports");
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Erro ao deslogar:", error);
     }

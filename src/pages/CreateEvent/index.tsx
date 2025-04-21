@@ -50,7 +50,7 @@ const CreateEventPage: React.FC = () => {
 
         <Form.Item
           label="Url do Evento"
-          name="url"
+          name="slug"
           rules={[{ required: true, message: "Informe a Url" }]}
         >
           <Input placeholder="Ex: formatura-fulano" />
