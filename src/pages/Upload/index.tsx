@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Upload, Button, message, Typography, Spin } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Upload, Button, message, Typography, Spin, notification } from "antd";
 import type { UploadProps } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../../api/supabaseClient";
 import { useParams } from "react-router-dom";
+import { IoMdCamera } from "react-icons/io";
+import { MdOutlineDriveFolderUpload } from "react-icons/md";
 
 const { Title } = Typography;
 
@@ -12,14 +13,16 @@ const UploadPage: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [eventId, setEventId] = useState<string | null>(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
+  const [eventName, setEventName] = useState<string | null>(null);
   const { slug } = useParams();
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     const fetchEvent = async () => {
       if (!slug) return;
       const { data, error } = await supabase
         .from("events")
-        .select("id")
+        .select("id, name")
         .eq("slug", slug)
         .single();
 
@@ -30,6 +33,7 @@ const UploadPage: React.FC = () => {
       }
 
       setEventId(data.id);
+      setEventName(data.name);
       setLoadingEvent(false);
     };
 
@@ -47,12 +51,15 @@ const UploadPage: React.FC = () => {
     const typedFile = file as File;
     const fileName = `${uuidv4()}-${typedFile.name}`;
 
-    const {  error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("event-photos")
       .upload(fileName, file);
 
     if (error) {
-      message.error("Erro ao fazer upload");
+      api.error({
+        message: "Erro ao fazer upload",
+        description: "Tente novamente em instantes.",
+      });
       onError?.(error);
       setUploading(false);
       return;
@@ -68,13 +75,19 @@ const UploadPage: React.FC = () => {
     });
 
     if (insertError) {
-      message.error("Erro ao salvar imagem no banco");
+      api.error({
+        message: "Erro ao salvar a imagem",
+        description: "Tente novamente em instantes.",
+      });
       onError?.(insertError);
       setUploading(false);
       return;
     }
 
-    message.success("Imagem enviada com sucesso!");
+    api.success({
+      message: "Upload concluído",
+      description: "Sua imagem foi enviada com sucesso!",
+    });
     onSuccess?.({});
     setUploading(false);
   };
@@ -88,24 +101,46 @@ const UploadPage: React.FC = () => {
   }
 
   return (
-    <div style={{ maxWidth: 500, margin: "0 auto", padding: 24 }}>
-      <Title level={3}>Envie sua foto da festa 🎉</Title>
-      <Upload
-        customRequest={handleUpload}
-        showUploadList={false}
-        accept="image/*"
-        capture="environment"
-      >
-        <Button
-          icon={<UploadOutlined />}
-          loading={uploading}
-          disabled={uploading}
-          type="primary"
-        >
-          Enviar Foto
-        </Button>
-      </Upload>
-    </div>
+    <>
+      {contextHolder}
+      <div style={{ maxWidth: 500, margin: "0 auto", padding: 24, border: "1px solid #f0f0f0", borderRadius: 8 }}>
+        <Title level={3}>Envie sua foto da festa 🎉 - {eventName}</Title>
+        <div style={{ display: "flex", gap: 16 }}>
+          <Upload
+            customRequest={handleUpload}
+            showUploadList={false}
+            accept="image/*"
+          >
+            <Button
+              icon={<MdOutlineDriveFolderUpload />}
+              loading={uploading}
+              disabled={uploading}
+              type="primary"
+              block
+            >
+              Enviar Imagem
+            </Button>
+          </Upload>
+
+          <Upload
+            customRequest={handleUpload}
+            showUploadList={false}
+            accept="image/*"
+            capture="environment"
+          >
+            <Button
+              icon={<IoMdCamera />}
+              loading={uploading}
+              disabled={uploading}
+              type="primary"
+              block
+            >
+              Tirar Foto
+            </Button>
+          </Upload>
+        </div>
+      </div>
+    </>
   );
 };
 

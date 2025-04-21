@@ -3,6 +3,8 @@ import { Card, List, Typography, Spin } from "antd";
 import { Link } from "react-router-dom";
 import { getEventsByCompanyId } from "../../api/Events";
 import { useUser } from "../../context/UserContext";
+import { FiImage, FiUpload } from "react-icons/fi";
+import { BiQrScan } from "react-icons/bi";
 
 const { Title } = Typography;
 
@@ -29,7 +31,7 @@ const Home: React.FC = () => {
           setLoading(false);
         }
       };
-  
+
       fetchEvents();
     }
   }, [user]);
@@ -53,13 +55,25 @@ const Home: React.FC = () => {
                   <strong>Name:</strong> {event.name}
                 </p>
                 <p>
-                  <strong>Url:</strong> {event.slug}
+                  <strong>URL:</strong> {event.slug}
                 </p>
                 <p>
-                  <Link to={`/upload/${event.slug}`}>🔼 Enviar Fotos</Link>
+                  <Link to={`/upload/${event.slug}`}>
+                    <FiUpload style={{ marginRight: 8 }} />
+                    Enviar Fotos
+                  </Link>
                 </p>
                 <p>
-                  <Link to={`/gallery/${event.slug}`}>🖼️ Ver Galeria</Link>
+                  <Link to={`/gallery/${event.slug}`}>
+                    <FiImage style={{ marginRight: 8 }} />
+                    Ver Galeria
+                  </Link>
+                </p>
+                <p>
+                  <Link to={`/qrcode/${event.slug}`}>
+                    <BiQrScan style={{ marginRight: 8 }} />
+                    Ver QR Code
+                  </Link>
                 </p>
               </Card>
             </List.Item>

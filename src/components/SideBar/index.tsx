@@ -6,8 +6,10 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { RxDashboard } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { supabase } from "../../api/supabaseClient";
-import { PiUsersThree } from "react-icons/pi";
+import { PiCalendarPlusDuotone } from "react-icons/pi";
 import { TbLogout2 } from "react-icons/tb";
+import { BiParty } from "react-icons/bi";
+import { FiUserPlus } from "react-icons/fi";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -122,7 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
 
         <Menu.Item
           key="1"
-          icon={<PiUsersThree size={18} />}
+          icon={<BiParty size={18} />}
           onClick={() => navigate("/home")}
           className={styles.itemMenu}
         >
@@ -130,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         </Menu.Item>
         <Menu.Item
           key="2"
-          icon={<PiUsersThree size={18} />}
+          icon={<PiCalendarPlusDuotone size={18} />}
           onClick={() => navigate("/create-event")}
           className={styles.itemMenu}
         >
@@ -138,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         </Menu.Item>
         <Menu.Item
           key="3"
-          icon={<PiUsersThree size={18} />}
+          icon={<FiUserPlus size={18} />}
           onClick={() => navigate("/create-user")}
           className={styles.itemMenu}
         >

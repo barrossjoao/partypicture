@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PublicRoute from "./PublicRoute";
+import PrivateRoute from "./PrivateRoute";
+import MainLayout from "../components/Layout";
+
 import Home from "../pages/Home";
 import UploadPage from "../pages/Upload";
 import GalleryPage from "../pages/Gallery";
@@ -7,8 +10,7 @@ import CreateEventPage from "../pages/CreateEvent";
 import Login from "../pages/Login";
 import CreateCompany from "../pages/CreateCompany";
 import CreateUserPage from "../pages/CreateUser";
-import MainLayout from "../components/Layout";
-import PrivateRoute from "./PrivateRoute";
+import QRCodePage from "../pages/QRCodePage";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -31,11 +33,21 @@ const AppRoutes: React.FC = () => {
             </PublicRoute>
           }
         />
+
         <Route
           path="/gallery/:slug"
           element={
             <PublicRoute>
               <GalleryPage />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/qrcode/:slug" 
+          element={
+            <PublicRoute>
+              <QRCodePage />
             </PublicRoute>
           }
         />
