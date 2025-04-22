@@ -20,7 +20,7 @@ const Home: React.FC = () => {
   const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
-    if (user && user.company_id) {
+    if (!userLoading && user?.company_id) {
       const fetchEvents = async () => {
         try {
           const data = await getEventsByCompanyId(user.company_id);
@@ -34,14 +34,16 @@ const Home: React.FC = () => {
 
       fetchEvents();
     }
-  }, [user]);
+  }, [userLoading, user]);
 
   return (
     <div>
       <Title level={2}>Eventos Criados</Title>
 
       {userLoading || loading ? (
-        <Spin />
+        <div style={{ textAlign: "center", marginTop: 50 }}>
+          <Spin />
+        </div>
       ) : events.length === 0 ? (
         <p>Nenhum evento criado ainda.</p>
       ) : (
