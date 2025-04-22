@@ -5,6 +5,7 @@ import styles from "./styles.module.css";
 import { supabase } from "../../api/supabaseClient";
 import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
+import { useUser } from "../../context/UserContext";
 
 type NotificationType = "success" | "info" | "warning" | "error";
 
@@ -15,6 +16,7 @@ const Login: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
   const isSpinning = loading;
+  const { refreshUser } = useUser();
 
   const openNotificationWithIcon = (
     type: NotificationType,
@@ -43,6 +45,7 @@ const Login: React.FC = () => {
     }
   
     openNotificationWithIcon("success", "Login realizado", "Bem-vindo de volta!");
+    await refreshUser();
     navigate("/home"); 
     setLoading(false);
   };

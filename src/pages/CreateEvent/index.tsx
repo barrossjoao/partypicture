@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Typography, notification } from "antd";
+import { Button, Checkbox, Form, Input, Typography, notification } from "antd";
 import QRCode from "react-qr-code";
 import { useUser } from "../../context/UserContext";
 import { createEvent, generateUniqueSlug } from "../../api/Events";
 import { createEventConfig } from "../../api/EventsConfig";
+import styles from "./styles.module.css";
 
 const { Title, Paragraph } = Typography;
 
@@ -17,6 +18,7 @@ const CreateEventPage: React.FC = () => {
   const onFinish = async (values: {
     name: string;
     time: string;
+    polaroid: boolean;
   }) => {
     setLoading(true);
 
@@ -45,6 +47,12 @@ const CreateEventPage: React.FC = () => {
       value: values.time,
     });
 
+    await createEventConfig({
+      event_id: eventData.id,
+      config_id: "9857fbfa-8f2b-4486-9a02-aef8d16dd7e9",
+      value: values.polaroid ? "true" : "false",
+    });
+
     api.success({
       message: "Evento criado com sucesso!",
       description: "O QR Code e o link de upload já estão prontos!",
@@ -58,44 +66,44 @@ const CreateEventPage: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div
-        style={{
-          maxWidth: 500,
-          margin: "0 auto",
-          padding: 24,
-          textAlign: "center",
-        }}
-      >
+      <div className={styles.container}>
         <Title level={3}>Criar Evento 🎊</Title>
-        <Form layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Nome do Evento"
-            name="name"
-            rules={[{ required: true, message: "Informe o nome" }]}
-          >
-            <Input placeholder="Ex: Formatura Fulano" />
-          </Form.Item>
-
-          <Form.Item
-            label="Tempo entre fotos (segundos)"
-            name="time"
-            rules={[{ required: true, message: "Informe o tempo em segundos" }]}
-          >
-            <Input type="number" placeholder="Ex: 5" min={1} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Criar Evento e Gerar QR
-            </Button>
-          </Form.Item>
-        </Form>
-
+  
+        <div className={styles.formWrapper}>
+          <Form layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Nome do Evento"
+              name="name"
+              rules={[{ required: true, message: "Informe o nome" }]}
+            >
+              <Input placeholder="Ex: Formatura Fulano" />
+            </Form.Item>
+  
+            <Form.Item
+              label="Tempo entre fotos (segundos)"
+              name="time"
+              rules={[{ required: true, message: "Informe o tempo em segundos" }]}
+            >
+              <Input type="number" placeholder="Ex: 5" min={1} />
+            </Form.Item>
+  
+            <Form.Item name="polaroid" valuePropName="checked">
+              <Checkbox>Ativar modo Polaroid</Checkbox>
+            </Form.Item>
+  
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading} block>
+                Criar Evento e Gerar QR
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+  
         {uploadUrl && (
-          <div style={{ marginTop: 32 }}>
+          <div className={styles.qrSection}>
             <Title level={4}>QR Code gerado!</Title>
             <Paragraph>Escaneie para enviar fotos para este evento:</Paragraph>
-            <QRCode value={uploadUrl} size={256} />
+            <QRCode value={uploadUrl} size={256} className={styles.qrCode} />
             <Paragraph copyable style={{ marginTop: 16 }}>
               {uploadUrl}
             </Paragraph>

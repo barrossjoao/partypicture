@@ -1,0 +1,22 @@
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+}
+
+.formWrapper {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px #0000000d;
+  padding: 24px;
+}
+
+.qrSection {
+  margin-top: 32px;
+}
+
+.qrCode {
+  margin: 0 auto;
+  display: block;
+}

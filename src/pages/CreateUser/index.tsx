@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Typography,
-  Select,
-  notification,
-} from "antd";
+import { Form, Input, Button, Typography, Select, notification } from "antd";
 import { supabase } from "../../api/supabaseClient";
 import { getCompanies } from "../../api/Companies";
+import styles from "./styles.module.css";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -102,66 +96,70 @@ const CreateUserPage: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div style={{ maxWidth: 500, margin: "0 auto", padding: 24 }}>
-        <Title level={3}>Criar Usuário 👤</Title>
-        <Form layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Nome"
-            name="name"
-            rules={[{ required: true, message: "Informe o nome" }]}
-          >
-            <Input />
-          </Form.Item>
+      <div className={styles.container}>
+        <div className={styles.formCard}>
+          <Title level={3} className={styles.title}>
+            Criar Usuário 👤
+          </Title>
+          <Form layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Nome"
+              name="name"
+              rules={[{ required: true, message: "Informe o nome" }]}
+            >
+              <Input placeholder="Nome" />
+            </Form.Item>
 
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, type: "email", message: "Email inválido" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, type: "email", message: "Email inválido" },
+              ]}
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
 
-          <Form.Item
-            label="Senha"
-            name="password"
-            rules={[{ required: true, message: "Informe uma senha" }]}
-          >
-            <Input.Password />
-          </Form.Item>
+            <Form.Item
+              label="Senha"
+              name="password"
+              rules={[{ required: true, message: "Informe uma senha" }]}
+            >
+              <Input.Password placeholder="Senha" />
+            </Form.Item>
 
-          <Form.Item
-            label="Função"
-            name="role"
-            rules={[{ required: true, message: "Selecione a função" }]}
-          >
-            <Select placeholder="Escolha o tipo de usuário">
-              <Option value="user">Usuário</Option>
-              <Option value="admin">Admin da empresa</Option>
-            </Select>
-          </Form.Item>
+            <Form.Item
+              label="Função"
+              name="role"
+              rules={[{ required: true, message: "Selecione a função" }]}
+            >
+              <Select placeholder="Escolha o tipo de usuário">
+                <Option value="user">Usuário</Option>
+                <Option value="admin">Admin da empresa</Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            label="Empresa"
-            name="company_id"
-            rules={[{ required: true, message: "Selecione a empresa" }]}
-          >
-            <Select placeholder="Selecione uma empresa">
-              {companies.map((company) => (
-                <Option key={company.id} value={company.id}>
-                  {company.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+            <Form.Item
+              label="Empresa"
+              name="company_id"
+              rules={[{ required: true, message: "Selecione a empresa" }]}
+            >
+              <Select placeholder="Selecione uma empresa">
+                {companies.map((company) => (
+                  <Option key={company.id} value={company.id}>
+                    {company.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Criar Usuário
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading} block>
+                Criar Usuário
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
     </>
   );

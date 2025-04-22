@@ -1,152 +1,17 @@
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 95vh;
-}
-
-.containerBox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  flex-direction: row;
-}
-
-.box {
-  padding: 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-height: 400px;
-  height: 400px;
-
-  border-top: 1px solid rgba(204, 204, 204, 0.5);
-  border-left: 1px solid rgba(204, 204, 204, 0.5);
-  border-bottom: 1px solid rgba(204, 204, 204, 0.5);
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-
-  box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 300px;
-  margin-top: 27px;
-}
-
-.googleButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  color: black;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.googleButton:hover {
-  background-color: white !important;
-  color: black !important;
-  transform: scale(1.02);
-}
-
-.googleLogo {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-}
-
-.boxImage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 80px;
-  background-color: #e7effb;
-  max-height: 400px;
-  height: 400px;
-
-  border-top: 1px solid rgba(204, 204, 204, 0.5);
-  border-right: 1px solid rgba(204, 204, 204, 0.5);
-  border-bottom: 1px solid rgba(204, 204, 204, 0.5);
-  box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.1);
- 
-   border-top-right-radius: 10px;
-   border-bottom-right-radius: 10px;
-}
-
-.titleLogin {
-  font-size: 3rem;
-  font-weight: 400;
-  letter-spacing: 8px;
-  font-family: 'Edu Australia VIC WA NT Hand Dots';
-  color: #3a3a3a;
-}
-
-.subtitle {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #3a3a3a;
-  width: 400px;
-  text-align: center;
-}
-
-
-.img {
-  width: 300px;
-  height: 300px;
+  max-width: 500px;
   margin: 0 auto;
+  padding: 24px;
 }
 
-@media (max-width: 768px) {
-  .container {
-    height: 90svh;
-    overflow: hidden;
-    padding: 20px;
-  }
+.formCard {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
 
-  .containerBox {
-    flex-direction: column;
-    height: auto;
-    padding: 0;
-  }
-
-  .box {
-    padding: 50px 50px;
-    max-height: none;
-    height: auto;
-    box-shadow: none;
-    border-radius: 10px;
-  }
-
-  .box {
-    border: 1px solid rgba(204, 204, 204, 0.5);
-  }
-
-  .boxImage {
-    display: none;
-  }
-
-  .form {
-    width: 100%;
-  }
-
-  .googleButton {
-    gap: 10px;
-    padding: 8px 16px;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
-    text-align: center;
-  }
+.title {
+  text-align: center;
+  margin-bottom: 24px;
 }

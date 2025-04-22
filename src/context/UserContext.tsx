@@ -28,7 +28,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUserData = async () => {
     setLoading(true);
     const { data: session } = await supabase.auth.getSession();
-
     const userId = session?.session?.user?.id;
 
     if (userId) {
@@ -53,6 +52,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     fetchUserData();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      fetchUserData(); 
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   return (

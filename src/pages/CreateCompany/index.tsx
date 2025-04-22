@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Typography, message } from "antd";
 import { supabase } from "../../api/supabaseClient";
-
+import styles from "./styles.module.css";
 const { Title } = Typography;
 
 const CreateCompany: React.FC = () => {
@@ -47,23 +47,25 @@ const CreateCompany: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: "0 auto", padding: 24 }}>
-      <Title level={3}>Criar Empresa 🏢</Title>
-      <Form layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          label="Nome da Empresa"
-          name="name"
-          rules={[{ required: true, message: "Informe o nome da empresa" }]}
-        >
-          <Input placeholder="Ex: Easy Weddings" />
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Criar Empresa
-          </Button>
-        </Form.Item>
-      </Form>
+    <div className={styles.container}>
+      <div className={styles.formCard}>
+        <Title level={3} className={styles.title}>Criar Empresa 🏢</Title>
+        <Form layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            label="Nome da Empresa"
+            name="name"
+            rules={[{ required: true, message: "Informe o nome da empresa" }]}
+          >
+            <Input placeholder="Ex: Easy Weddings" />
+          </Form.Item>
+  
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block>
+              Criar Empresa
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };
