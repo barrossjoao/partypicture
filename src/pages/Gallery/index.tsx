@@ -20,7 +20,7 @@ const GalleryPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [timeConfig, setTimeConfig] = useState<number | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
-  const [showFullscreenBtn, setShowFullscreenBtn] = useState(false);
+  const [showFullscreenBtn, setShowFullscreenBtn] = useState<boolean>(false);
 
   const fetchPhotos = async (event_id: string) => {
     await getPhotosByEventId(event_id)
