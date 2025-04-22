@@ -4,13 +4,27 @@ import { useParams } from "react-router-dom";
 import { Button, Spin, message } from "antd";
 import QRCode from "react-qr-code";
 import { MdFullscreen } from "react-icons/md";
-import { getTimeConfigEventByEventId } from "../../api/EventsConfig";
+import {
+  getPolaroidConfigEventByEventId,
+  getTimeConfigEventByEventId,
+} from "../../api/EventsConfig";
 import { getPhotosByEventId } from "../../api/Photos";
 import { getEventBySlug } from "../../api/Events";
+import styles from "./styles.module.css";
 
 interface Photo {
   id: string;
   image_url: string;
+}
+
+interface Event {
+  id: string;
+  name: string;
+  slug: string;
+  upload_url: string;
+  created_at: string;
+  company_id: string;
+  event_date?: string;
 }
 
 const GalleryPage: React.FC = () => {
@@ -21,6 +35,8 @@ const GalleryPage: React.FC = () => {
   const [timeConfig, setTimeConfig] = useState<number | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
   const [showFullscreenBtn, setShowFullscreenBtn] = useState<boolean>(false);
+  const [polaroid, setPolaroid] = useState<string | null>(null);
+  const [event, setEvent] = useState<Event>();
 
   const fetchPhotos = async (event_id: string) => {
     await getPhotosByEventId(event_id)
@@ -49,6 +65,17 @@ const GalleryPage: React.FC = () => {
     }
   };
 
+  const fetchPolaroidConfig = async (event_id: string) => {
+    try {
+      const polaroid = await getPolaroidConfigEventByEventId(event_id);
+      if (polaroid) {
+        setPolaroid(polaroid);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar configuração de tempo:", error);
+    }
+  };
+
   const subscribeToNewPhotos = (eventId: string) => {
     const channel = supabase
       .channel(`photos-insert-${eventId}`)
@@ -63,7 +90,6 @@ const GalleryPage: React.FC = () => {
         (payload) => {
           const newPhoto = payload.new as Photo;
           setPhotos((prev) => [...prev, newPhoto]);
-          console.log("📸 Nova foto recebida via realtime:", payload);
         }
       )
       .subscribe();
@@ -85,12 +111,15 @@ const GalleryPage: React.FC = () => {
         setLoading(false);
         return;
       }
-      
+
       setUploadUrl(eventData.upload_url);
+      setEvent(eventData);
+      console.log(eventData);
       await fetchPhotos(eventData.id);
       await fetchTimeConfig(eventData.id);
+      await fetchPolaroidConfig(eventData.id);
       setLoading(false);
-      
+
       unsubscribe = subscribeToNewPhotos(eventData.id);
     };
 
@@ -249,16 +278,29 @@ const GalleryPage: React.FC = () => {
           </Button>
         )}
       </div>
-      <img
-        src={photos[currentIndex].image_url}
-        alt="Slide"
-        style={{
-          maxWidth: "100%",
-          maxHeight: "100%",
-          objectFit: "contain",
-          transition: "opacity 0.5s ease-in-out",
-        }}
-      />
+      {polaroid === "true" ? (
+        <div className={styles.polaroidWrapper}>
+          <img
+            src={photos[currentIndex].image_url}
+            alt="Slide"
+            className={styles.polaroidImage}
+          />
+          <span className={styles.polaroidText}>
+            {event?.name} <br /> 22/09/2023
+          </span>
+        </div>
+      ) : (
+        <img
+          src={photos[currentIndex].image_url}
+          alt="Slide"
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+            objectFit: "contain",
+            transition: "opacity 0.5s ease-in-out",
+          }}
+        />
+      )}
       {uploadUrl && (
         <div
           style={{

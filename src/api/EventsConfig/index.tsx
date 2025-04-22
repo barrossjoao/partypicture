@@ -36,3 +36,21 @@ export const getTimeConfigEventByEventId = async (
 
   return data?.value || null;
 }
+
+export const getPolaroidConfigEventByEventId = async (
+  eventId: string
+): Promise<string | null> => {
+  const { data, error } = await supabase
+    .from("event_configs")
+    .select("value")
+    .eq("event_id", eventId)
+    .eq("config_id", "9857fbfa-8f2b-4486-9a02-aef8d16dd7e9")
+    .single();
+
+  if (error) {
+    console.error("Erro ao buscar configuração de polaroid do evento:", error);
+    return null;
+  }
+
+  return data?.value || null;
+}

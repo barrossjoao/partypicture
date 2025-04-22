@@ -42,7 +42,6 @@ const Home: React.FC = () => {
         try {
           setLoading(true);
           const data = await getEventsByCompanyId(user.company_id);
-          console.log(data, 'data');
           setEvents(data);
           setFilteredEvents(data);
         } catch (error) {

@@ -7,6 +7,7 @@ export interface Events {
   upload_url: string;
   created_at: string;
   company_id: string;
+  event_date?: string;
 }
 
 export interface CreateEvent {
