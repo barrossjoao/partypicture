@@ -9,6 +9,13 @@ export interface Events {
   company_id: string;
 }
 
+export interface CreateEvent {
+  name: string;
+  slug: string;
+  upload_url: string;
+  company_id: string;
+}
+
 export const getEvents = async (): Promise<Events[]> => {
   const { data, error } = await supabase
     .from("events")
@@ -38,7 +45,7 @@ export const getEventsByCompanyId = async (companyId: string): Promise<Events[]>
   return data || [];
 }
 
-export const createEvent = async (event: Events): Promise<Events | null> => {
+export const createEvent = async (event: CreateEvent): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
     .insert(event)
@@ -53,3 +60,22 @@ export const createEvent = async (event: Events): Promise<Events | null> => {
   return data;
 };
 
+export const generateUniqueSlug = async (name: string): Promise<string> => {
+  const base = name.toLowerCase().replace(/\s+/g, "-");
+  let attempt = base;
+  const original = base;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("events")
+      .select("id")
+      .eq("slug", attempt)
+      .maybeSingle();
+
+    if (!data || error) break;
+
+    attempt = `${original}-${Math.floor(Math.random() * 10000)}`;
+  }
+
+  return attempt;
+};

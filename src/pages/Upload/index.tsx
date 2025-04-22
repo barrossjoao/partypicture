@@ -7,38 +7,59 @@ import { useParams } from "react-router-dom";
 import { IoMdCamera } from "react-icons/io";
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import imageCompression from 'browser-image-compression';
+import { getEvents } from "../../api/Events";
 
 const { Title } = Typography;
 
+interface Configs {
+  id: string;
+  name: string;
+  description: string;
+}
+
 const UploadPage: React.FC = () => {
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [configs, setConfigs] = useState<Configs[]>([]);
   const [eventId, setEventId] = useState<string | null>(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventName, setEventName] = useState<string | null>(null);
   const { slug } = useParams();
   const [api, contextHolder] = notification.useNotification();
 
-  useEffect(() => {
-    const fetchEvent = async () => {
-      if (!slug) return;
-      const { data, error } = await supabase
-        .from("events")
-        .select("id, name")
-        .eq("slug", slug)
-        .single();
+  const fetchEvent = async () => {
+    if (!slug) return;
+    const { data, error } = await supabase
+      .from("events")
+      .select("id, name")
+      .eq("slug", slug)
+      .single();
 
-      if (error || !data) {
-        message.error("Evento não encontrado.");
-        setLoadingEvent(false);
-        return;
-      }
-
-      setEventId(data.id);
-      setEventName(data.name);
+    if (error || !data) {
+      message.error("Evento não encontrado.");
       setLoadingEvent(false);
-    };
+      return;
+    }
 
+    setEventId(data.id);
+    setEventName(data.name);
+    setLoadingEvent(false);
+  };
+
+  const fetchConfigs = async () => {
+    await getEvents()
+      .then((data) => {
+        setConfigs(data);
+      }).catch((error) => {
+        console.error("Error fetching configs:", error);
+      }).finally(() => {
+        setLoadingEvent(false);
+      }
+      );
+  };
+
+  useEffect(() => {
     fetchEvent();
+    fetchConfigs();
   }, [slug]);
 
 
