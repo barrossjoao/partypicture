@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabaseClient";
 import { useParams } from "react-router-dom";
-import { Spin, message } from "antd";
+import { Button, Spin, message } from "antd";
 import QRCode from "react-qr-code";
+import { MdFullscreen } from "react-icons/md";
 
 const SLIDE_INTERVAL = 5000;
 
@@ -18,6 +19,7 @@ const GalleryPage: React.FC = () => {
   const [, setEventId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
+  const [showFullscreenBtn, setShowFullscreenBtn] = useState(false);
 
   const fetchPhotos = async (event_id: string) => {
     const { data, error } = await supabase
@@ -67,6 +69,23 @@ const GalleryPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [photos]);
 
+  const toggleFullScreen = () => {
+    const el = document.documentElement;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+  
+    return () => {
+      document.body.style.overflow = "auto"; 
+    };
+  }, []);
+
   if (loading) {
     return (
       <div
@@ -88,7 +107,7 @@ const GalleryPage: React.FC = () => {
     return (
       <div
         style={{
-          height: "100vh",
+          height: "100%",
           backgroundColor: "#000",
           color: "#fff",
           display: "flex",
@@ -97,14 +116,44 @@ const GalleryPage: React.FC = () => {
           justifyContent: "center",
           textAlign: "center",
           padding: 20,
-          overflow: "block",
         }}
       >
-        <QRCode value={uploadUrl} size={220} />
+        <div
+          onMouseEnter={() => setShowFullscreenBtn(true)}
+          onMouseLeave={() => setShowFullscreenBtn(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            width: 100,
+            height: 80,
+            zIndex: 9,
+          }}
+        >
+          {showFullscreenBtn && (
+            <Button
+              onClick={toggleFullScreen}
+              style={{
+                position: "fixed",
+                top: 20,
+                right: 20,
+                background: "#fff",
+                cursor: "pointer",
+                fontWeight: "bold",
+                zIndex: 10,
+              }}
+              icon={<MdFullscreen />}
+            >
+              Tela cheia
+            </Button>
+          )}
+        </div>
+        <QRCode value={uploadUrl} size={300} />
         <p style={{ marginTop: 24, fontSize: 40 }}>
           Nenhuma foto enviada ainda...
           <br />
-          Escaneie o QR Code para compartilhar os melhores momentos da festa! 📸🎉
+          Escaneie o QR Code para compartilhar os melhores momentos da festa!
+          📸🎉
         </p>
       </div>
     );
@@ -122,6 +171,36 @@ const GalleryPage: React.FC = () => {
         overflow: "hidden",
       }}
     >
+      <div
+        onMouseEnter={() => setShowFullscreenBtn(true)}
+        onMouseLeave={() => setShowFullscreenBtn(false)}
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          width: 100,
+          height: 80,
+          zIndex: 9,
+        }}
+      >
+        {showFullscreenBtn && (
+          <Button
+            onClick={toggleFullScreen}
+            style={{
+              position: "fixed",
+              top: 20,
+              right: 20,
+              background: "#fff",
+              cursor: "pointer",
+              fontWeight: "bold",
+              zIndex: 10,
+            }}
+            icon={<MdFullscreen />}
+          >
+            Tela cheia
+          </Button>
+        )}
+      </div>
       <img
         src={photos[currentIndex].image_url}
         alt="Slide"

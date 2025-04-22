@@ -12,7 +12,6 @@ const CreateCompany: React.FC = () => {
 
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Cria a empresa
     const { data: company, error } = await supabase
       .from("companies")
       .insert({ name: values.name })

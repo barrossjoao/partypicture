@@ -11,6 +11,8 @@ import Login from "../pages/Login";
 import CreateCompany from "../pages/CreateCompany";
 import CreateUserPage from "../pages/CreateUser";
 import QRCodePage from "../pages/QRCodePage";
+import AdminRoute from "./AdminRoute";
+import NotFound from "../pages/NotFound";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -32,7 +34,7 @@ const AppRoutes: React.FC = () => {
               <UploadPage />
             </PublicRoute>
           }
-        />
+        />cod
 
         <Route
           path="/gallery/:slug"
@@ -44,7 +46,7 @@ const AppRoutes: React.FC = () => {
         />
 
         <Route
-          path="/qrcode/:slug" 
+          path="/qrcode/:slug"
           element={
             <PublicRoute>
               <QRCodePage />
@@ -53,14 +55,6 @@ const AppRoutes: React.FC = () => {
         />
 
         <Route element={<MainLayout />}>
-          <Route
-            path="/create-company"
-            element={
-              <PrivateRoute>
-                <CreateCompany />
-              </PrivateRoute>
-            }
-          />
           <Route
             path="/home"
             element={
@@ -80,12 +74,21 @@ const AppRoutes: React.FC = () => {
           <Route
             path="/create-user"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <CreateUserPage />
-              </PrivateRoute>
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/create-company"
+            element={
+              <AdminRoute>
+                <CreateCompany />
+              </AdminRoute>
             }
           />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
