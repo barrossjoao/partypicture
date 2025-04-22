@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { Button, Spin, message } from "antd";
 import QRCode from "react-qr-code";
 import { MdFullscreen } from "react-icons/md";
-
-const SLIDE_INTERVAL = 5000;
+import { getTimeConfigEventByEventId } from "../../api/EventsConfig";
+import { getPhotosByEventId } from "../../api/Photos";
 
 interface Photo {
   id: string;
@@ -16,27 +16,40 @@ const GalleryPage: React.FC = () => {
   const { slug } = useParams();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [, setEventId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [timeConfig, setTimeConfig] = useState<number | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
   const [showFullscreenBtn, setShowFullscreenBtn] = useState(false);
 
   const fetchPhotos = async (event_id: string) => {
-    const { data, error } = await supabase
-      .from("photos")
-      .select("id, image_url")
-      .eq("event_id", event_id)
-      .order("created_at", { ascending: true });
+    await getPhotosByEventId(event_id)
+      .then((data) => {
+        if (data.length > 0) {
+          setPhotos(data);
+        } else {
+          message.error("Nenhuma foto encontrada para este evento.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar fotos:", error);
+        message.error("Erro ao buscar fotos.");
+      });
+  };
 
-    if (error) {
-      console.error("Erro ao buscar fotos:", error);
-    } else {
-      setPhotos(data || []);
+  const fetchTimeConfig = async (event_id: string) => {
+    try {
+      const time = await getTimeConfigEventByEventId(event_id);
+      if (time) {
+        const seconds = parseInt(time, 10);
+        setTimeConfig(isNaN(seconds) ? null : seconds);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar configuração de tempo:", error);
     }
   };
 
   useEffect(() => {
-    const loadEventId = async () => {
+    const loadEventData = async () => {
       if (!slug) return;
 
       const { data, error } = await supabase
@@ -50,24 +63,39 @@ const GalleryPage: React.FC = () => {
         setLoading(false);
         return;
       }
-      setEventId(data.id);
+
       setUploadUrl(data.upload_url);
       await fetchPhotos(data.id);
+      await fetchTimeConfig(data.id);
       setLoading(false);
     };
 
-    loadEventId();
+    loadEventData();
   }, [slug]);
 
   useEffect(() => {
-    if (photos.length === 0) return;
-
+    if (photos.length === 0 || !timeConfig) return;
+  
+    const initial = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % photos.length);
+    }, 1000);
+  
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % photos.length);
-    }, SLIDE_INTERVAL);
+    }, timeConfig * 1000);
+  
+    return () => {
+      clearTimeout(initial);
+      clearInterval(interval);
+    };
+  }, [photos, timeConfig]);
 
-    return () => clearInterval(interval);
-  }, [photos]);
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   const toggleFullScreen = () => {
     const el = document.documentElement;
@@ -77,14 +105,6 @@ const GalleryPage: React.FC = () => {
       document.exitFullscreen?.();
     }
   };
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-  
-    return () => {
-      document.body.style.overflow = "auto"; 
-    };
-  }, []);
 
   if (loading) {
     return (
@@ -152,8 +172,7 @@ const GalleryPage: React.FC = () => {
         <p style={{ marginTop: 24, fontSize: 40 }}>
           Nenhuma foto enviada ainda...
           <br />
-          Escaneie o QR Code para compartilhar os melhores momentos da festa!
-          📸🎉
+          Escaneie o QR Code para compartilhar os melhores momentos da festa! 📸🎉
         </p>
       </div>
     );
