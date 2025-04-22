@@ -48,7 +48,6 @@ const GalleryPage: React.FC = () => {
         setLoading(false);
         return;
       }
-      console.log(data, 'data')
       setEventId(data.id);
       setUploadUrl(data.upload_url);
       await fetchPhotos(data.id);
@@ -85,7 +84,7 @@ const GalleryPage: React.FC = () => {
     );
   }
 
-  if (photos.length === 0) {
+  if (photos.length === 0 && uploadUrl) {
     return (
       <div
         style={{
@@ -93,12 +92,20 @@ const GalleryPage: React.FC = () => {
           backgroundColor: "#000",
           color: "#fff",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 24,
+          textAlign: "center",
+          padding: 20,
+          overflow: "block",
         }}
       >
-        Nenhuma foto enviada ainda...
+        <QRCode value={uploadUrl} size={220} />
+        <p style={{ marginTop: 24, fontSize: 40 }}>
+          Nenhuma foto enviada ainda...
+          <br />
+          Escaneie o QR Code para compartilhar os melhores momentos da festa! 📸🎉
+        </p>
       </div>
     );
   }

@@ -37,7 +37,7 @@ const Home: React.FC = () => {
   }, [user]);
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
+    <div>
       <Title level={2}>Eventos Criados</Title>
 
       {userLoading || loading ? (
