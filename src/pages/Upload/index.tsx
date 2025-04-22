@@ -7,19 +7,10 @@ import { useParams } from "react-router-dom";
 import { IoMdCamera } from "react-icons/io";
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import imageCompression from 'browser-image-compression';
-import { getEvents } from "../../api/Events";
-
 const { Title } = Typography;
-
-interface Configs {
-  id: string;
-  name: string;
-  description: string;
-}
 
 const UploadPage: React.FC = () => {
   const [uploading, setUploading] = useState<boolean>(false);
-  const [configs, setConfigs] = useState<Configs[]>([]);
   const [eventId, setEventId] = useState<string | null>(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventName, setEventName] = useState<string | null>(null);
@@ -45,21 +36,8 @@ const UploadPage: React.FC = () => {
     setLoadingEvent(false);
   };
 
-  const fetchConfigs = async () => {
-    await getEvents()
-      .then((data) => {
-        setConfigs(data);
-      }).catch((error) => {
-        console.error("Error fetching configs:", error);
-      }).finally(() => {
-        setLoadingEvent(false);
-      }
-      );
-  };
-
   useEffect(() => {
     fetchEvent();
-    fetchConfigs();
   }, [slug]);
 
 
