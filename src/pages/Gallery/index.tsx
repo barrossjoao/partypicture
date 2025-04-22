@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabaseClient";
 import { useParams } from "react-router-dom";
 import { Spin, message } from "antd";
+import QRCode from "react-qr-code";
 
 const SLIDE_INTERVAL = 5000;
 
@@ -15,7 +16,8 @@ const GalleryPage: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [, setEventId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [uploadUrl, setUploadUrl] = useState<string | null>(null);
 
   const fetchPhotos = async (event_id: string) => {
     const { data, error } = await supabase
@@ -37,7 +39,7 @@ const GalleryPage: React.FC = () => {
 
       const { data, error } = await supabase
         .from("events")
-        .select("id")
+        .select("id, upload_url")
         .eq("slug", slug)
         .single();
 
@@ -46,8 +48,9 @@ const GalleryPage: React.FC = () => {
         setLoading(false);
         return;
       }
-
+      console.log(data, 'data')
       setEventId(data.id);
+      setUploadUrl(data.upload_url);
       await fetchPhotos(data.id);
       setLoading(false);
     };
@@ -67,7 +70,16 @@ const GalleryPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ height: "100vh", backgroundColor: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div
+        style={{
+          height: "100vh",
+          backgroundColor: "#000",
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Spin tip="Carregando galeria..." />
       </div>
     );
@@ -113,6 +125,21 @@ const GalleryPage: React.FC = () => {
           transition: "opacity 0.5s ease-in-out",
         }}
       />
+      {uploadUrl && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            background: "#fff",
+            padding: 8,
+            borderRadius: 8,
+            boxShadow: "0 0 10px rgba(0,0,0,0.5)",
+          }}
+        >
+          <QRCode value={uploadUrl} size={80} />
+        </div>
+      )}
     </div>
   );
 };
