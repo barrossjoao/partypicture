@@ -79,3 +79,18 @@ export const generateUniqueSlug = async (name: string): Promise<string> => {
 
   return attempt;
 };
+
+export const getEventBySlug = async (slug: string): Promise<Events | null> => {
+  const { data, error } = await supabase
+    .from("events")
+    .select("id, name, slug, upload_url, created_at, company_id")
+    .eq("slug", slug)
+    .single();
+
+  if (error || !data) {
+    console.error("Erro ao buscar evento por slug:", error);
+    return null;
+  }
+
+  return data;
+};

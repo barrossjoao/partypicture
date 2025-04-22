@@ -6,6 +6,7 @@ import QRCode from "react-qr-code";
 import { MdFullscreen } from "react-icons/md";
 import { getTimeConfigEventByEventId } from "../../api/EventsConfig";
 import { getPhotosByEventId } from "../../api/Photos";
+import { getEventBySlug } from "../../api/Events";
 
 interface Photo {
   id: string;
@@ -48,42 +49,69 @@ const GalleryPage: React.FC = () => {
     }
   };
 
+  const subscribeToNewPhotos = (eventId: string) => {
+    const channel = supabase
+      .channel(`photos-insert-${eventId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "photos",
+          filter: `event_id=eq.${eventId}`,
+        },
+        (payload) => {
+          const newPhoto = payload.new as Photo;
+          setPhotos((prev) => [...prev, newPhoto]);
+          console.log("📸 Nova foto recebida via realtime:", payload);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
   useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+
     const loadEventData = async () => {
       if (!slug) return;
 
-      const { data, error } = await supabase
-        .from("events")
-        .select("id, upload_url")
-        .eq("slug", slug)
-        .single();
-
-      if (error || !data) {
+      const eventData = await getEventBySlug(slug);
+      if (!eventData) {
         message.error("Evento não encontrado.");
         setLoading(false);
         return;
       }
-
-      setUploadUrl(data.upload_url);
-      await fetchPhotos(data.id);
-      await fetchTimeConfig(data.id);
+      
+      setUploadUrl(eventData.upload_url);
+      await fetchPhotos(eventData.id);
+      await fetchTimeConfig(eventData.id);
       setLoading(false);
+      
+      unsubscribe = subscribeToNewPhotos(eventData.id);
     };
 
     loadEventData();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [slug]);
 
   useEffect(() => {
     if (photos.length === 0 || !timeConfig) return;
-  
+
     const initial = setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % photos.length);
     }, 1000);
-  
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % photos.length);
     }, timeConfig * 1000);
-  
+
     return () => {
       clearTimeout(initial);
       clearInterval(interval);
@@ -172,7 +200,8 @@ const GalleryPage: React.FC = () => {
         <p style={{ marginTop: 24, fontSize: 40 }}>
           Nenhuma foto enviada ainda...
           <br />
-          Escaneie o QR Code para compartilhar os melhores momentos da festa! 📸🎉
+          Escaneie o QR Code para compartilhar os melhores momentos da festa!
+          📸🎉
         </p>
       </div>
     );
