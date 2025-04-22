@@ -6,7 +6,9 @@ import { supabase } from "../../api/supabaseClient";
 import { useParams } from "react-router-dom";
 import { IoMdCamera } from "react-icons/io";
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
+import styles from "./styles.module.css";
+import { BsMoon, BsSun } from "react-icons/bs";
 const { Title } = Typography;
 
 const UploadPage: React.FC = () => {
@@ -16,6 +18,11 @@ const UploadPage: React.FC = () => {
   const [eventName, setEventName] = useState<string | null>(null);
   const { slug } = useParams();
   const [api, contextHolder] = notification.useNotification();
+  const [darkMode, setDarkMode] = useState<boolean>(true);
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   const fetchEvent = async () => {
     if (!slug) return;
@@ -40,13 +47,12 @@ const UploadPage: React.FC = () => {
     fetchEvent();
   }, [slug]);
 
-
   const handleImage = async (file: File): Promise<File> => {
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
       useWebWorker: true,
-      fileType: 'image/jpeg',
+      fileType: "image/jpeg",
     };
     return await imageCompression(file, options);
   };
@@ -61,7 +67,6 @@ const UploadPage: React.FC = () => {
     setUploading(true);
     const typedFile = file as File;
     const fileName = `${uuidv4()}-${typedFile.name}`;
-
 
     const compressedFile = await handleImage(typedFile);
 
@@ -117,41 +122,62 @@ const UploadPage: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div style={{ maxWidth: 500, margin: "0 auto", padding: 24, border: "1px solid #f0f0f0", borderRadius: 8 }}>
-        <Title level={3}>Envie sua foto da festa 🎉 - {eventName}</Title>
-        <div style={{ display: "flex", gap: 16 }}>
-          <Upload
-            customRequest={handleUpload}
-            showUploadList={false}
-            accept="image/*"
-          >
-            <Button
-              icon={<MdOutlineDriveFolderUpload />}
-              loading={uploading}
-              disabled={uploading}
-              type="primary"
-              block
-            >
-              Enviar Imagem
-            </Button>
-          </Upload>
+      <div className={`${styles.pageContainer} ${darkMode ? styles.dark : ""}`}>
+        <div
+          style={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            zIndex: 999,
+          }}
+        >
+          <Button
+            shape="circle"
+            onClick={() => setDarkMode((prev) => !prev)}
+            icon={darkMode ? <BsSun /> : <BsMoon />}
+          />
+        </div>
+        <div className={styles.card}>
+          <Title level={3} className={styles.title}>
+            Envie sua foto da festa 🎉
+            <br />
+            <span className={styles.subtitle}>{eventName}</span>
+          </Title>
 
-          <Upload
-            customRequest={handleUpload}
-            showUploadList={false}
-            accept="image/*"
-            capture="environment"
-          >
-            <Button
-              icon={<IoMdCamera />}
-              loading={uploading}
-              disabled={uploading}
-              type="primary"
-              block
+          <div className={styles.buttonGroup}>
+            <Upload
+              customRequest={handleUpload}
+              showUploadList={false}
+              accept="image/*"
             >
-              Tirar Foto
-            </Button>
-          </Upload>
+              <Button
+                icon={<MdOutlineDriveFolderUpload />}
+                loading={uploading}
+                disabled={uploading}
+                type="primary"
+                size="large"
+              >
+                Enviar Imagem da Galeria
+              </Button>
+            </Upload>
+
+            <Upload
+              customRequest={handleUpload}
+              showUploadList={false}
+              accept="image/*"
+              capture="environment"
+            >
+              <Button
+                icon={<IoMdCamera />}
+                loading={uploading}
+                disabled={uploading}
+                type="default"
+                size="large"
+              >
+                Tirar Foto com a Câmera
+              </Button>
+            </Upload>
+          </div>
         </div>
       </div>
     </>
