@@ -6,6 +6,7 @@ import { supabase } from "../../api/supabaseClient";
 import { useParams } from "react-router-dom";
 import { IoMdCamera } from "react-icons/io";
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
+import imageCompression from 'browser-image-compression';
 
 const { Title } = Typography;
 
@@ -40,6 +41,17 @@ const UploadPage: React.FC = () => {
     fetchEvent();
   }, [slug]);
 
+
+  const handleImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/jpeg',
+    };
+    return await imageCompression(file, options);
+  };
+
   const handleUpload: UploadProps["customRequest"] = async ({
     file,
     onSuccess,
@@ -51,9 +63,12 @@ const UploadPage: React.FC = () => {
     const typedFile = file as File;
     const fileName = `${uuidv4()}-${typedFile.name}`;
 
+
+    const compressedFile = await handleImage(typedFile);
+
     const { error } = await supabase.storage
       .from("event-photos")
-      .upload(fileName, file);
+      .upload(fileName, compressedFile);
 
     if (error) {
       api.error({
