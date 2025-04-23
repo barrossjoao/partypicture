@@ -39,7 +39,6 @@ const ManageGallery: React.FC = () => {
         (payload) => {
           const newPhoto = payload.new as Photo;
           setPhotos((prev) => {
-            // Evita duplicar se já estiver presente
             if (prev.find((p) => p.id === newPhoto.id)) return prev;
             return [...prev, newPhoto];
           });
