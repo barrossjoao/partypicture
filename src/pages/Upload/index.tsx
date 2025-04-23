@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Upload, Button, message, Typography, Spin, notification } from "antd";
+import { Upload, Button, Typography, Spin, notification } from "antd";
 import type { UploadProps } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../../api/supabaseClient";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoMdCamera } from "react-icons/io";
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import imageCompression from "browser-image-compression";
 import styles from "./styles.module.css";
 import { BsMoon, BsSun } from "react-icons/bs";
+import { getEventBySlug } from "../../api/Events";
 const { Title } = Typography;
 
 const UploadPage: React.FC = () => {
@@ -19,6 +20,7 @@ const UploadPage: React.FC = () => {
   const { slug } = useParams();
   const [api, contextHolder] = notification.useNotification();
   const [darkMode, setDarkMode] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
@@ -26,18 +28,14 @@ const UploadPage: React.FC = () => {
 
   const fetchEvent = async () => {
     if (!slug) return;
-    const { data, error } = await supabase
-      .from("events")
-      .select("id, name")
-      .eq("slug", slug)
-      .single();
-
-    if (error || !data) {
-      message.error("Evento não encontrado.");
-      setLoadingEvent(false);
+  
+    const data = await getEventBySlug(slug);
+  
+    if (!data) {
+      navigate("/404");
       return;
     }
-
+  
     setEventId(data.id);
     setEventName(data.name);
     setLoadingEvent(false);
@@ -45,6 +43,7 @@ const UploadPage: React.FC = () => {
 
   useEffect(() => {
     fetchEvent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const handleImage = async (file: File): Promise<File> => {

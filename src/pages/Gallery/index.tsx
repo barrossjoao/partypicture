@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabaseClient";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Spin, message } from "antd";
 import QRCode from "react-qr-code";
 import { MdFullscreen } from "react-icons/md";
@@ -29,6 +29,7 @@ interface Event {
 
 const GalleryPage: React.FC = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -107,8 +108,7 @@ const GalleryPage: React.FC = () => {
 
       const eventData = await getEventBySlug(slug);
       if (!eventData) {
-        message.error("Evento não encontrado.");
-        setLoading(false);
+        navigate("/404");
         return;
       }
 
@@ -128,6 +128,7 @@ const GalleryPage: React.FC = () => {
     return () => {
       if (unsubscribe) unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   useEffect(() => {
