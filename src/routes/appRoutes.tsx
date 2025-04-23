@@ -13,6 +13,7 @@ import CreateUserPage from "../pages/CreateUser";
 import QRCodePage from "../pages/QRCodePage";
 import AdminRoute from "./AdminRoute";
 import NotFound from "../pages/NotFound";
+import ManageGallery from "../pages/ManageGallery";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -26,7 +27,6 @@ const AppRoutes: React.FC = () => {
             </PublicRoute>
           }
         />
-
         <Route
           path="/upload/:slug"
           element={
@@ -34,8 +34,8 @@ const AppRoutes: React.FC = () => {
               <UploadPage />
             </PublicRoute>
           }
-        />cod
-
+        />
+        cod
         <Route
           path="/gallery/:slug"
           element={
@@ -44,7 +44,6 @@ const AppRoutes: React.FC = () => {
             </PublicRoute>
           }
         />
-
         <Route
           path="/qrcode/:slug"
           element={
@@ -53,7 +52,6 @@ const AppRoutes: React.FC = () => {
             </PublicRoute>
           }
         />
-
         <Route element={<MainLayout />}>
           <Route
             path="/home"
@@ -85,6 +83,14 @@ const AppRoutes: React.FC = () => {
               <AdminRoute>
                 <CreateCompany />
               </AdminRoute>
+            }
+          />
+          <Route
+            path="/manage-gallery/:eventId"
+            element={
+              <PrivateRoute>
+                <ManageGallery />
+              </PrivateRoute>
             }
           />
         </Route>

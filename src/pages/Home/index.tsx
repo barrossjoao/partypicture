@@ -174,6 +174,12 @@ const Home: React.FC = () => {
                       </Link>
                     </Col>
                     <Col span={12}>
+                      <Link to={`/manage-gallery/${event.id}`}>
+                        <FiImage style={{ marginRight: 8 }} />
+                        Editar Galeria
+                      </Link>
+                    </Col>
+                    <Col span={12}>
                       <a
                         href="#"
                         onClick={async (e) => {
