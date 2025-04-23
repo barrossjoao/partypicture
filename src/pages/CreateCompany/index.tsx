@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Form, Input, Button, Typography, notification } from "antd";
 import { supabase } from "../../api/supabaseClient";
 import styles from "./styles.module.css";
 const { Title } = Typography;
 
 const CreateCompany: React.FC = () => {
   const [loading, setLoading] = useState(false);
+    const [api, contextHolder] = notification.useNotification();
 
   const onFinish = async (values: { name: string }) => {
     setLoading(true);
-
-    const { data: { user } } = await supabase.auth.getUser();
 
     const { data: company, error } = await supabase
       .from("companies")
@@ -19,34 +18,27 @@ const CreateCompany: React.FC = () => {
       .single();
 
     if (error || !company) {
-      message.error("Erro ao criar empresa");
+      api.error({
+        message: "Erro ao criar empresa",
+        description: "Não foi possível salvar a empresa. Tente novamente.",
+      });
       console.error(error);
       setLoading(false);
       return;
     }
 
-    if (!user) {
-      message.error("Usuário não autenticado.");
-      setLoading(false);
-      return;
-    }
+    api.success({
+      message: "Empresa criada com sucesso!",
+      description: "A empresa foi criada com sucesso.",
+    });
 
-    const { error: userError } = await supabase
-      .from("users")
-      .update({ company_id: company.id })
-      .eq("id", user.id);
-
-    if (userError) {
-      message.warning("Empresa criada, mas não foi possível associar o usuário.");
-      console.error(userError);
-    } else {
-      message.success("Empresa criada com sucesso!");
-    }
 
     setLoading(false);
   };
 
   return (
+    <>
+      {contextHolder}
     <div className={styles.container}>
       <div className={styles.formCard}>
         <Title level={3} className={styles.title}>Criar Empresa 🏢</Title>
@@ -67,6 +59,7 @@ const CreateCompany: React.FC = () => {
         </Form>
       </div>
     </div>
+    </>
   );
 };
 
