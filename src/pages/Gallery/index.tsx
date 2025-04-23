@@ -8,7 +8,7 @@ import {
   getPolaroidConfigEventByEventId,
   getTimeConfigEventByEventId,
 } from "../../api/EventsConfig";
-import { getPhotosByEventId } from "../../api/Photos";
+import { getPhotosVisibleByEventId } from "../../api/Photos";
 import { getEventBySlug } from "../../api/Events";
 import styles from "./styles.module.css";
 
@@ -40,7 +40,7 @@ const GalleryPage: React.FC = () => {
   const [event, setEvent] = useState<Event>();
 
   const fetchPhotos = async (event_id: string) => {
-    await getPhotosByEventId(event_id)
+    await getPhotosVisibleByEventId(event_id)
       .then((data) => {
         if (data.length > 0) {
           setPhotos(data);
@@ -77,9 +77,9 @@ const GalleryPage: React.FC = () => {
     }
   };
 
-  const subscribeToNewPhotos = (eventId: string) => {
+  const subscribeToPhotoChanges = (eventId: string) => {
     const channel = supabase
-      .channel(`photos-insert-${eventId}`)
+      .channel(`photos-changes-${eventId}`)
       .on(
         "postgres_changes",
         {
@@ -88,13 +88,46 @@ const GalleryPage: React.FC = () => {
           table: "photos",
           filter: `event_id=eq.${eventId}`,
         },
-        (payload) => {
-          const newPhoto = payload.new as Photo;
-          setPhotos((prev) => [...prev, newPhoto]);
+        async (payload) => {
+          const insertedId = payload.new.id;
+          const { data, error } = await supabase
+            .from("photos")
+            .select("id, image_url, event_id, visible")
+            .eq("id", insertedId)
+            .single();
+  
+          if (!error && data && data.visible) {
+            setPhotos((prev) => [...prev, data]);
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "photos",
+          filter: `event_id=eq.${eventId}`,
+        },
+        async (payload) => {
+          const updated = payload.new as Photo & { visible: boolean };
+  
+          setPhotos((prev) => {
+            const exists = prev.find((p) => p.id === updated.id);
+  
+            if (updated.visible) {
+              // Se não existe, adiciona. Se existe, atualiza.
+              if (!exists) return [...prev, updated];
+              return prev.map((p) => (p.id === updated.id ? updated : p));
+            } else {
+              // Se deixou de ser visível, remove
+              return prev.filter((p) => p.id !== updated.id);
+            }
+          });
         }
       )
       .subscribe();
-
+  
     return () => {
       supabase.removeChannel(channel);
     };
@@ -120,7 +153,7 @@ const GalleryPage: React.FC = () => {
       await fetchPolaroidConfig(eventData.id);
       setLoading(false);
 
-      unsubscribe = subscribeToNewPhotos(eventData.id);
+      unsubscribe = subscribeToPhotoChanges(eventData.id);
     };
 
     loadEventData();

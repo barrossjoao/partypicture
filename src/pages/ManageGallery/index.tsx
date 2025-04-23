@@ -1,4 +1,4 @@
-import { Button, notification, Popconfirm, Tooltip } from "antd";
+import { Button, notification, Popconfirm, Switch, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   getPhotosByEventId,
@@ -7,7 +7,7 @@ import {
   deletePhotoById,
 } from "../../api/Photos";
 import { useParams } from "react-router-dom";
-import { FaRegEye, FaRegEyeSlash, FaTrash } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa6";
 
 const ManageGallery: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -83,20 +83,18 @@ const ManageGallery: React.FC = () => {
                 gap: "12px",
               }}
             >
-              <Tooltip title={photo.hidden ? "Mostrar foto" : "Ocultar foto"}>
-                <Button
-                  type="default"
-                  icon={photo.hidden ? <FaRegEye /> : <FaRegEyeSlash />}
-                  size="large"
-                  onClick={async () => {
+              <Tooltip title={photo.hidden ? "Oculta" : "Visível"}>
+                <Switch
+                  checked={!photo.hidden}
+                  onChange={async (checked) => {
                     const updated = await updatePhotoVisibility(
                       photo.id,
-                      photo.hidden !== true
-                    );
+                      checked
+                    ); // true = visível
                     if (updated) {
                       setPhotos((prev) =>
                         prev.map((p) =>
-                          p.id === photo.id ? { ...p, hidden: !p.hidden } : p
+                          p.id === photo.id ? { ...p, hidden: !checked } : p
                         )
                       );
                     } else {
