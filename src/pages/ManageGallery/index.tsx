@@ -165,7 +165,6 @@ const ManageGallery: React.FC = () => {
                         });
                       }
                     }}
-                    disabled={photos.length === 1}
                   />
                 </div>
 
