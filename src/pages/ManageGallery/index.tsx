@@ -193,6 +193,7 @@ const ManageGallery: React.FC = () => {
                       type="default"
                       icon={<FaTrash />}
                       size="middle"
+                      disabled={photos.length === 1}
                     >
                       Excluir
                     </Button>
