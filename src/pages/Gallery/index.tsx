@@ -39,6 +39,7 @@ const GalleryPage: React.FC = () => {
   const [polaroid, setPolaroid] = useState<string | null>(null);
   const [event, setEvent] = useState<Event>();
 
+
   const fetchPhotos = async (event_id: string) => {
     await getPhotosVisibleByEventId(event_id)
       .then((data) => {
@@ -92,11 +93,12 @@ const GalleryPage: React.FC = () => {
           const insertedId = payload.new.id;
           const { data, error } = await supabase
             .from("photos")
-            .select("id, image_url, event_id, visible")
+            .select("id, image_url, event_id")
             .eq("id", insertedId)
+            .eq("visible", true)
             .single();
   
-          if (!error && data && data.visible) {
+          if (!error && data?.id) {
             setPhotos((prev) => [...prev, data]);
           }
         }
@@ -109,21 +111,38 @@ const GalleryPage: React.FC = () => {
           table: "photos",
           filter: `event_id=eq.${eventId}`,
         },
-        async (payload) => {
-          const updated = payload.new as Photo & { visible: boolean };
-  
-          setPhotos((prev) => {
-            const exists = prev.find((p) => p.id === updated.id);
-  
-            if (updated.visible) {
-              // Se não existe, adiciona. Se existe, atualiza.
-              if (!exists) return [...prev, updated];
-              return prev.map((p) => (p.id === updated.id ? updated : p));
-            } else {
-              // Se deixou de ser visível, remove
-              return prev.filter((p) => p.id !== updated.id);
+        async () => {  
+            const { data, error } = await supabase
+              .from("photos")
+              .select("id, image_url, event_id")
+              .eq("event_id", eventId)
+              .eq("visible", true);
+
+    
+            if (!error && data) {
+              setPhotos(data);
             }
-          });
+          }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "photos",
+          filter: `event_id=eq.${eventId}`,
+        },
+        async () => {
+          const { data, error } = await supabase
+            .from("photos")
+            .select("id, image_url, event_id")
+            .eq("event_id", eventId)
+            .eq("visible", true);
+
+            console.log('data', data);
+          if (!error && data) {
+            setPhotos(data);
+          }
         }
       )
       .subscribe();
@@ -312,12 +331,16 @@ const GalleryPage: React.FC = () => {
           </Button>
         )}
       </div>
-      {polaroid === "true" ? (
+      { !photos[currentIndex]?.image_url && uploadUrl ? (
+        <QRCode value={uploadUrl} size={600} />
+      ) : 
+      polaroid === "true" ? (
         <div className={styles.polaroidWrapper}>
           <img
             src={photos[currentIndex].image_url}
             alt="Slide"
             className={styles.polaroidImage}
+            onError={() => setCurrentIndex((prev) => (prev + 1) % photos.length)}
           />
           <span className={styles.polaroidText}>
             {event?.name} <br /> 22/09/2023
@@ -333,6 +356,7 @@ const GalleryPage: React.FC = () => {
             objectFit: "contain",
             transition: "opacity 0.5s ease-in-out",
           }}
+          onError={() => setCurrentIndex((prev) => (prev + 1) % photos.length)}
         />
       )}
       {uploadUrl && (
