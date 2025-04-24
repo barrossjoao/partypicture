@@ -36,7 +36,7 @@
   flex-direction: column;
   gap: 10px;
   width: 300px;
-  margin-top: 27px;
+  margin-top: 80px;
 }
 
 .googleButton {
@@ -82,6 +82,7 @@
 
 .titleLogin {
   font-size: 3rem;
+  margin-top: -30px;
   font-weight: 400;
   letter-spacing: 8px;
   font-family: 'Edu Australia VIC WA NT Hand Dots';
@@ -89,6 +90,7 @@
 }
 
 .subtitle {
+  margin-top: -10px;
   font-size: 1rem;
   font-weight: 400;
   color: #3a3a3a;

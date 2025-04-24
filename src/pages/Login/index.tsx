@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Divider, Input, notification, Spin } from "antd";
+import { Button, Input, notification, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import { supabase } from "../../api/supabaseClient";
@@ -89,15 +89,6 @@ const Login: React.FC = () => {
                   className={styles.loginButton}
                 >
                   Entrar
-                </Button>
-                <Divider className={styles.divider}>Ou</Divider>
-                <Button
-                  type="link"
-                  onClick={() => console.log(true)}
-                  className={styles.resetPasswordButton}
-                  loading={loading}
-                >
-                  Esqueci a Senha
                 </Button>
               </form>
             </div>
