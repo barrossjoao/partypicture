@@ -55,8 +55,12 @@ const ManageGallery: React.FC = () => {
         setLoading(true);
         const data = await getPhotosByEventId(eventId);
         if (data.length > 0) {
-          setPhotos(data);
-        } else {
+          const parsed = data.map((photo) => ({
+            ...photo,
+            hidden: !photo.visible,
+          }));
+          setPhotos(parsed);
+        }else {
           console.log("Nenhuma foto encontrada.");
         }
       } catch (error) {

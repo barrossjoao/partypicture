@@ -4,12 +4,13 @@ export interface Photo {
   id: string;
   image_url: string;
   event_id: string;
+  visible?: boolean;
 }
 
 export const getPhotosByEventId = async (event_id: string): Promise<Photo[]> => {
   const { data, error } = await supabase
     .from("photos")
-    .select("id, image_url, event_id")
+    .select("id, image_url, event_id, visible")
     .eq("event_id", event_id)
     .order("created_at", { ascending: true });
 
