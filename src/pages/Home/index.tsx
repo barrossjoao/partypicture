@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Card,
-  List,
   Typography,
   Spin,
   Avatar,
@@ -10,6 +9,7 @@ import {
   Col,
   Select,
   notification,
+  Pagination,
 } from "antd";
 import { Link } from "react-router-dom";
 import { getEventsByCompanyId } from "../../api/Events";
@@ -18,6 +18,7 @@ import { FiDownload, FiImage, FiUpload } from "react-icons/fi";
 import { BiQrScan } from "react-icons/bi";
 import { downloadPhotosAsZip } from "../../utils/exportAllPhotos";
 import { getPhotosByEventId } from "../../api/Photos";
+import styles from "./styles.module.css";
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -89,27 +90,22 @@ const Home: React.FC = () => {
     <>
       {contextHolder}
       <div>
-        <Row
-          justify="space-between"
-          align="middle"
-          style={{ marginBottom: 24 }}
-        >
-          <Col>
-            <Title level={2} style={{ marginTop: 20 }}>
-              Eventos
-            </Title>
-          </Col>
-          <Col style={{ display: "flex", gap: 16 }}>
+        <div className={styles.header}>
+          <Title level={2} className={styles.title}>
+            Eventos
+          </Title>
+
+          <div className={styles.filters}>
             <Search
               placeholder="Pesquisar por nome"
               allowClear
               onChange={(e) => setSearchValue(e.target.value)}
-              style={{ width: 250 }}
+              style={{ width: "200px" }}
             />
             <Select
               value={pageSize}
               onChange={(value) => setPageSize(value)}
-              style={{ width: 120 }}
+              style={{ width: "200px" }}
             >
               <Option value={12}>12 por página</Option>
               <Option value={24}>24 por página</Option>
@@ -117,39 +113,26 @@ const Home: React.FC = () => {
               <Option value={36}>36 por página</Option>
               <Option value={filteredEvents.length}>Todos</Option>
             </Select>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         {loading ? (
-          <div style={{ textAlign: "center", marginTop: 50 }}>
+          <div className={styles.loading}>
             <Spin />
           </div>
         ) : filteredEvents.length === 0 ? (
           <p>Nenhum evento encontrado.</p>
         ) : (
-          <List
-            grid={{ gutter: 16, column: 3 }}
-            dataSource={paginatedEvents}
-            pagination={{
-              current: currentPage,
-              pageSize,
-              total: filteredEvents.length,
-              onChange: (page) => setCurrentPage(page),
-              showSizeChanger: false,
-            }}
-            renderItem={(event) => (
-              <List.Item>
+          <div className={styles.grid}>
+            {paginatedEvents.map((event) => (
+              <div key={event.id} className={styles.cardItem}>
                 <Card
                   title={
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 12 }}
-                    >
+                    <div className={styles.cardTitle}>
                       <Avatar style={{ backgroundColor: "#1677ff" }}>
                         {getInitials(event.name)}
                       </Avatar>
-                     <Link to={`/edit-event/${event.id}`}>
-                        {event.name}
-                      </Link>
+                      <Link to={`/edit-event/${event.id}`}>{event.name}</Link>
                     </div>
                   }
                 >
@@ -216,10 +199,19 @@ const Home: React.FC = () => {
                     </Col>
                   </Row>
                 </Card>
-              </List.Item>
-            )}
-          />
+              </div>
+            ))}
+          </div>
         )}
+        <div className={styles.pagination}>
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={filteredEvents.length}
+            onChange={(page) => setCurrentPage(page)}
+            style={{ textAlign: "center", marginTop: 24 }}
+          />
+        </div>
       </div>
     </>
   );
