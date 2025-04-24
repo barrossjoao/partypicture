@@ -147,7 +147,6 @@ const GalleryPage: React.FC = () => {
 
       setUploadUrl(eventData.upload_url);
       setEvent(eventData);
-      console.log(eventData);
       await fetchPhotos(eventData.id);
       await fetchTimeConfig(eventData.id);
       await fetchPolaroidConfig(eventData.id);

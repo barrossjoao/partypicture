@@ -75,8 +75,6 @@ const ManageGallery: React.FC = () => {
     };
   }, [eventId]);
 
-  console.log(photos, "fotos");
-
   return (
     <>
       <Title level={2} style={{ marginTop: 20 }}>
