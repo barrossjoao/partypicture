@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Typography, notification } from "antd";
 import styles from "./styles.module.css";
 import { useUser } from "../../context/UserContext";
-import { getUserById, updateUserProfile } from "../../api/Users"; // certifique-se que esse updateUser existe
+import { getUserById, updateUserProfile } from "../../api/Users"; 
 const { Title } = Typography;
 
 interface User {

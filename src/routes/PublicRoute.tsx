@@ -23,7 +23,6 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
     return <div>Verificando sessão...</div>;
   }
 
-  // Redireciona apenas se estiver autenticado e tentando acessar "/login"
   if (isAuthenticated && location.pathname === "/login") {
     return <Navigate to="/" />;
   }

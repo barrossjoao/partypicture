@@ -50,11 +50,6 @@ const Login: React.FC = () => {
     setLoading(false);
   };
 
-  // const handleResetPassword = async () => {
-  //   setLoading(true);
-
-  // };
-
   return (
     <>
       {contextHolder}
