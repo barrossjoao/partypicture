@@ -147,7 +147,9 @@ const Home: React.FC = () => {
                       <Avatar style={{ backgroundColor: "#1677ff" }}>
                         {getInitials(event.name)}
                       </Avatar>
-                      <span>{event.name}</span>
+                     <Link to={`/edit-event/${event.id}`}>
+                        {event.name}
+                      </Link>
                     </div>
                   }
                 >

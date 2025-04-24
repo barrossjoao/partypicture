@@ -14,6 +14,7 @@ import QRCodePage from "../pages/QRCodePage";
 import AdminRoute from "./AdminRoute";
 import NotFound from "../pages/NotFound";
 import ManageGallery from "../pages/ManageGallery";
+import EditEventPage from "../pages/EditEventPage";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -90,6 +91,14 @@ const AppRoutes: React.FC = () => {
             element={
               <PrivateRoute>
                 <ManageGallery />
+              </PrivateRoute>
+            }
+          />
+                    <Route
+            path="/edit-event/:eventId"
+            element={
+              <PrivateRoute>
+                <EditEventPage />
               </PrivateRoute>
             }
           />

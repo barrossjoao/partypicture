@@ -46,6 +46,21 @@ export const getEventsByCompanyId = async (companyId: string): Promise<Events[]>
   return data || [];
 }
 
+export const getEventById = async (id: string): Promise<Events | null> => {
+  const { data, error } = await supabase
+    .from("events")
+    .select("id, name, slug, upload_url, created_at, company_id")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching event by ID:", error);
+    return null;
+  }
+
+  return data;
+};
+
 export const createEvent = async (event: CreateEvent): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
@@ -95,3 +110,19 @@ export const getEventBySlug = async (slug: string): Promise<Events | null> => {
 
   return data;
 };
+
+export const updateEvent = async (id: string, event: Partial<CreateEvent>): Promise<Events | null> => {
+  const { data, error } = await supabase
+    .from("events")
+    .update(event)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating event:", error);
+    return null;
+  }
+
+  return data;
+}
