@@ -15,12 +15,13 @@ export interface CreateEvent {
   slug: string;
   upload_url: string;
   company_id: string;
+  event_date?: string;
 }
 
 export const getEvents = async (): Promise<Events[]> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id")
+    .select("id, name, slug, upload_url, created_at, company_id, event_date")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -34,7 +35,7 @@ export const getEvents = async (): Promise<Events[]> => {
 export const getEventsByCompanyId = async (companyId: string): Promise<Events[]> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id")
+    .select("id, name, slug, upload_url, created_at, company_id, event_date")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
 
@@ -49,7 +50,7 @@ export const getEventsByCompanyId = async (companyId: string): Promise<Events[]>
 export const getEventById = async (id: string): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id")
+    .select("id, name, slug, upload_url, created_at, company_id,event_date")
     .eq("id", id)
     .single();
 
@@ -99,7 +100,7 @@ export const generateUniqueSlug = async (name: string): Promise<string> => {
 export const getEventBySlug = async (slug: string): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id")
+    .select("id, name, slug, upload_url, created_at, company_id, event_date")
     .eq("slug", slug)
     .single();
 

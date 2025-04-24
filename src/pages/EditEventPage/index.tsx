@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Form, Input, Spin, Typography, notification } from "antd";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Spin,
+  Typography,
+  notification,
+} from "antd";
 import { useUser } from "../../context/UserContext";
 import styles from "./styles.module.css";
 import { useParams } from "react-router-dom";
-import { generateUniqueSlug, getEventById, updateEvent } from "../../api/Events";
+import {
+  generateUniqueSlug,
+  getEventById,
+  updateEvent,
+} from "../../api/Events";
 import {
   getPolaroidConfigEventByEventId,
   getTimeConfigEventByEventId,
@@ -55,6 +67,9 @@ const EditEventPage: React.FC = () => {
         name: event.name,
         time: timeValue.toString(),
         polaroid: polaroidValue,
+        event_date: event.event_date
+          ? new Date(event.event_date).toISOString().split("T")[0]
+          : undefined,
       });
 
       setLoading(false);
@@ -76,6 +91,7 @@ const EditEventPage: React.FC = () => {
     name: string;
     time: string;
     polaroid: boolean;
+    event_date: string;
   }) => {
     if (!eventId) return;
 
@@ -84,11 +100,12 @@ const EditEventPage: React.FC = () => {
     try {
       const newSlug = await generateUniqueSlug(values.name);
       const uploadLink = `${window.location.origin}/upload/${newSlug}`;
-      
+
       const updated = await updateEvent(eventId, {
         name: values.name,
         slug: newSlug,
         upload_url: uploadLink,
+        event_date: values.event_date,
       });
 
       if (!updated) {
@@ -147,7 +164,7 @@ const EditEventPage: React.FC = () => {
       ) : (
         <div className={styles.container}>
           <Title level={3}>Editar Evento 🎊</Title>
-  
+
           <div className={styles.formWrapper}>
             <Form layout="vertical" form={form} onFinish={onFinish}>
               <Form.Item
@@ -157,21 +174,32 @@ const EditEventPage: React.FC = () => {
               >
                 <Input placeholder="Ex: Formatura Fulano" />
               </Form.Item>
-  
+
               <Form.Item
                 label="Tempo entre fotos (segundos)"
                 name="time"
-                rules={[{ required: true, message: "Informe o tempo em segundos" }]}
+                rules={[
+                  { required: true, message: "Informe o tempo em segundos" },
+                ]}
               >
                 <Input type="number" placeholder="Ex: 5" min={1} />
               </Form.Item>
-  
+
               <Form.Item name="polaroid" valuePropName="checked">
                 <Checkbox>Ativar modo Polaroid</Checkbox>
               </Form.Item>
-  
+
+              <Form.Item label="Data do Evento" name="event_date">
+                <Input type="date" />
+              </Form.Item>
+
               <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading} block>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  block
+                >
                   {loading ? "Atualizando..." : "Atualizar Evento"}
                 </Button>
               </Form.Item>

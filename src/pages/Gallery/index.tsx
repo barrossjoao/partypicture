@@ -39,7 +39,6 @@ const GalleryPage: React.FC = () => {
   const [polaroid, setPolaroid] = useState<string | null>(null);
   const [event, setEvent] = useState<Event>();
 
-
   const fetchPhotos = async (event_id: string) => {
     await getPhotosVisibleByEventId(event_id)
       .then((data) => {
@@ -97,7 +96,7 @@ const GalleryPage: React.FC = () => {
             .eq("id", insertedId)
             .eq("visible", true)
             .single();
-  
+
           if (!error && data?.id) {
             setPhotos((prev) => [...prev, data]);
           }
@@ -111,18 +110,17 @@ const GalleryPage: React.FC = () => {
           table: "photos",
           filter: `event_id=eq.${eventId}`,
         },
-        async () => {  
-            const { data, error } = await supabase
-              .from("photos")
-              .select("id, image_url, event_id")
-              .eq("event_id", eventId)
-              .eq("visible", true);
+        async () => {
+          const { data, error } = await supabase
+            .from("photos")
+            .select("id, image_url, event_id")
+            .eq("event_id", eventId)
+            .eq("visible", true);
 
-    
-            if (!error && data) {
-              setPhotos(data);
-            }
+          if (!error && data) {
+            setPhotos(data);
           }
+        }
       )
       .on(
         "postgres_changes",
@@ -139,14 +137,14 @@ const GalleryPage: React.FC = () => {
             .eq("event_id", eventId)
             .eq("visible", true);
 
-            console.log('data', data);
+          console.log("data", data);
           if (!error && data) {
             setPhotos(data);
           }
         }
       )
       .subscribe();
-  
+
     return () => {
       supabase.removeChannel(channel);
     };
@@ -330,19 +328,23 @@ const GalleryPage: React.FC = () => {
           </Button>
         )}
       </div>
-      { !photos[currentIndex]?.image_url && uploadUrl ? (
+      {!photos[currentIndex]?.image_url && uploadUrl ? (
         <QRCode value={uploadUrl} size={600} />
-      ) : 
-      polaroid === "true" ? (
+      ) : polaroid === "true" ? (
         <div className={styles.polaroidWrapper}>
           <img
             src={photos[currentIndex].image_url}
             alt="Slide"
             className={styles.polaroidImage}
-            onError={() => setCurrentIndex((prev) => (prev + 1) % photos.length)}
+            onError={() =>
+              setCurrentIndex((prev) => (prev + 1) % photos.length)
+            }
           />
           <span className={styles.polaroidText}>
-            {event?.name} <br /> 22/09/2023
+            {event?.name} <br />
+            {event?.event_date
+              ? new Date(event.event_date).toLocaleDateString("pt-BR")
+              : ""}
           </span>
         </div>
       ) : (

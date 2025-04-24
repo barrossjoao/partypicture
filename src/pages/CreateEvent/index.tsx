@@ -19,6 +19,7 @@ const CreateEventPage: React.FC = () => {
     name: string;
     time: string;
     polaroid: boolean;
+    event_date: string;
   }) => {
     setLoading(true);
 
@@ -30,6 +31,7 @@ const CreateEventPage: React.FC = () => {
       slug,
       upload_url: uploadLink,
       company_id: user?.company_id || "",
+      event_date: values.event_date,
     });
 
     if (!eventData) {
@@ -68,7 +70,7 @@ const CreateEventPage: React.FC = () => {
       {contextHolder}
       <div className={styles.container}>
         <Title level={3}>Criar Evento 🎊</Title>
-  
+
         <div className={styles.formWrapper}>
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item
@@ -78,19 +80,28 @@ const CreateEventPage: React.FC = () => {
             >
               <Input placeholder="Ex: Formatura Fulano" />
             </Form.Item>
-  
+
             <Form.Item
               label="Tempo entre fotos (segundos)"
               name="time"
-              rules={[{ required: true, message: "Informe o tempo em segundos" }]}
+              rules={[
+                { required: true, message: "Informe o tempo em segundos" },
+              ]}
             >
               <Input type="number" placeholder="Ex: 5" min={1} />
             </Form.Item>
-  
+
             <Form.Item name="polaroid" valuePropName="checked">
               <Checkbox>Ativar modo Polaroid</Checkbox>
             </Form.Item>
-  
+
+            <Form.Item
+              label="Data do Evento"
+              name="event_date"
+            >
+              <Input type="date" />
+            </Form.Item>
+
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading} block>
                 Criar Evento e Gerar QR
@@ -98,7 +109,7 @@ const CreateEventPage: React.FC = () => {
             </Form.Item>
           </Form>
         </div>
-  
+
         {uploadUrl && (
           <div className={styles.qrSection}>
             <Title level={4}>QR Code gerado!</Title>
