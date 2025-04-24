@@ -15,6 +15,7 @@ import AdminRoute from "./AdminRoute";
 import NotFound from "../pages/NotFound";
 import ManageGallery from "../pages/ManageGallery";
 import EditEventPage from "../pages/EditEventPage";
+import Admin from "../pages/Admin";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -75,6 +76,14 @@ const AppRoutes: React.FC = () => {
             element={
               <AdminRoute>
                 <CreateUserPage />
+              </AdminRoute>
+            }
+          />
+                    <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <Admin />
               </AdminRoute>
             }
           />
