@@ -9,7 +9,7 @@ import { supabase } from "../../api/supabaseClient";
 import { PiCalendarPlusDuotone } from "react-icons/pi";
 import { TbLogout2 } from "react-icons/tb";
 import { BiParty } from "react-icons/bi";
-import { FiUserPlus } from "react-icons/fi";
+import { FiUser, FiUserPlus } from "react-icons/fi";
 import { BsBuilding } from "react-icons/bs";
 
 interface SidebarProps {
@@ -49,6 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     if (location.pathname.startsWith("/create-event")) return "2";
     if (location.pathname.startsWith("/create-user")) return "3";
     if (location.pathname.startsWith("/create-company")) return "4";
+    if (location.pathname.startsWith("/profile")) return "5";
     if (location.pathname.startsWith("/admin")) return "admin";
     return "1";
   };
@@ -157,6 +158,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           className={styles.itemMenu}
         >
           Criar Empresa
+        </Menu.Item>
+        <Menu.Item
+          key="5"
+          icon={<FiUser size={18} />}
+          onClick={() => navigate("/profile")}
+          className={styles.itemMenu}
+        >
+          Profile
         </Menu.Item>
         </>
         )}

@@ -1,0 +1,17 @@
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.formCard {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+}

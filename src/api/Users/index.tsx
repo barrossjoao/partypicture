@@ -22,6 +22,22 @@ export const getUsers = async () => {
   return data as Users[];
 };
 
+
+export const getUserById = async (id: string): Promise<Users | null> => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching user by ID:", error);
+    return null;
+  }
+
+  return data as Users;
+}
+
 export const updateUser = async (
   id: string,
   name: string,
@@ -37,6 +53,21 @@ export const updateUser = async (
     console.error("Error updating user:", error);
   }
 }
+
+export const updateUserProfile = async (
+  id: string,
+  name: string,
+  email: string
+): Promise<void> => {
+  const { error } = await supabase
+    .from("users")
+    .update({ name, email })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error updating user:", error);
+  }
+};
 
 export const deleteUser = async (id: string): Promise<void> => {
   const { error } = await supabase

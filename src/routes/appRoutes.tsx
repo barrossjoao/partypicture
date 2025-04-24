@@ -16,6 +16,7 @@ import NotFound from "../pages/NotFound";
 import ManageGallery from "../pages/ManageGallery";
 import EditEventPage from "../pages/EditEventPage";
 import Admin from "../pages/Admin";
+import ProfilePage from "../pages/Profile";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -100,6 +101,14 @@ const AppRoutes: React.FC = () => {
             element={
               <PrivateRoute>
                 <ManageGallery />
+              </PrivateRoute>
+            }
+          />
+                    <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
               </PrivateRoute>
             }
           />
