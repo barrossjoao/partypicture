@@ -8,6 +8,7 @@ export interface Events {
   created_at: string;
   company_id: string;
   event_date?: string;
+  custom_description?: string;
 }
 
 export interface CreateEvent {
@@ -16,6 +17,7 @@ export interface CreateEvent {
   upload_url: string;
   company_id: string;
   event_date?: string;
+  custom_description?: string;
 }
 
 export const getEvents = async (): Promise<Events[]> => {
@@ -32,10 +34,14 @@ export const getEvents = async (): Promise<Events[]> => {
   return data || [];
 };
 
-export const getEventsByCompanyId = async (companyId: string): Promise<Events[]> => {
+export const getEventsByCompanyId = async (
+  companyId: string
+): Promise<Events[]> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id, event_date")
+    .select(
+      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
+    )
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
 
@@ -45,12 +51,14 @@ export const getEventsByCompanyId = async (companyId: string): Promise<Events[]>
   }
 
   return data || [];
-}
+};
 
 export const getEventById = async (id: string): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id,event_date")
+    .select(
+      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
+    )
     .eq("id", id)
     .single();
 
@@ -62,7 +70,9 @@ export const getEventById = async (id: string): Promise<Events | null> => {
   return data;
 };
 
-export const createEvent = async (event: CreateEvent): Promise<Events | null> => {
+export const createEvent = async (
+  event: CreateEvent
+): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
     .insert(event)
@@ -100,7 +110,9 @@ export const generateUniqueSlug = async (name: string): Promise<string> => {
 export const getEventBySlug = async (slug: string): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id, event_date")
+    .select(
+      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
+    )
     .eq("slug", slug)
     .single();
 
@@ -112,7 +124,10 @@ export const getEventBySlug = async (slug: string): Promise<Events | null> => {
   return data;
 };
 
-export const updateEvent = async (id: string, event: Partial<CreateEvent>): Promise<Events | null> => {
+export const updateEvent = async (
+  id: string,
+  event: Partial<CreateEvent>
+): Promise<Events | null> => {
   const { data, error } = await supabase
     .from("events")
     .update(event)
@@ -126,4 +141,4 @@ export const updateEvent = async (id: string, event: Partial<CreateEvent>): Prom
   }
 
   return data;
-}
+};

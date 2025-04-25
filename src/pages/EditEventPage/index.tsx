@@ -33,6 +33,8 @@ interface Events {
   company_id: string;
   time?: number;
   polaroid?: boolean;
+  event_date?: string;
+  custom_description?: string;
 }
 
 const EditEventPage: React.FC = () => {
@@ -70,6 +72,7 @@ const EditEventPage: React.FC = () => {
         event_date: event.event_date
           ? new Date(event.event_date).toISOString().split("T")[0]
           : undefined,
+        custom_description: event.custom_description || "",
       });
 
       setLoading(false);
@@ -92,6 +95,7 @@ const EditEventPage: React.FC = () => {
     time: string;
     polaroid: boolean;
     event_date: string;
+    custom_description: string;
   }) => {
     if (!eventId) return;
 
@@ -106,6 +110,7 @@ const EditEventPage: React.FC = () => {
         slug: newSlug,
         upload_url: uploadLink,
         event_date: values.event_date,
+        custom_description: values.custom_description,
       });
 
       if (!updated) {
@@ -191,6 +196,12 @@ const EditEventPage: React.FC = () => {
 
               <Form.Item label="Data do Evento" name="event_date">
                 <Input type="date" />
+              </Form.Item>
+
+              <Form.Item label="Descrição" name="custom_description">
+                <Input 
+                  placeholder="Descrição personalizada do evento"
+                  />
               </Form.Item>
 
               <Form.Item>

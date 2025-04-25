@@ -20,6 +20,7 @@ const CreateEventPage: React.FC = () => {
     time: string;
     polaroid: boolean;
     event_date: string;
+    custom_description: string;
   }) => {
     setLoading(true);
 
@@ -32,6 +33,7 @@ const CreateEventPage: React.FC = () => {
       upload_url: uploadLink,
       company_id: user?.company_id || "",
       event_date: values.event_date,
+      custom_description: values.custom_description,
     });
 
     if (!eventData) {
@@ -100,6 +102,13 @@ const CreateEventPage: React.FC = () => {
               name="event_date"
             >
               <Input type="date" />
+            </Form.Item>
+
+            <Form.Item
+              label="Descrição do Evento"
+              name="custom_description"
+            >
+              <Input placeholder="Ex: Venha participar desse momento único para o Fulano" />
             </Form.Item>
 
             <Form.Item>

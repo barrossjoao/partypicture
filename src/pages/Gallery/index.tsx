@@ -25,6 +25,7 @@ interface Event {
   created_at: string;
   company_id: string;
   event_date?: string;
+  custom_description?: string;
 }
 
 const GalleryPage: React.FC = () => {
@@ -276,12 +277,18 @@ const GalleryPage: React.FC = () => {
           )}
         </div>
         <QRCode value={uploadUrl} size={300} />
-        <p style={{ marginTop: 24, fontSize: 40 }}>
-          Nenhuma foto enviada ainda...
-          <br />
-          Escaneie o QR Code para compartilhar os melhores momentos da festa!
-          📸🎉
-        </p>
+        {event?.custom_description ? (
+          <p style={{ marginTop: 24, fontSize: 40 }}>
+            {event.custom_description}
+          </p>
+        ) : (
+          <p style={{ marginTop: 24, fontSize: 40 }}>
+            Nenhuma foto enviada ainda...
+            <br />
+            Escaneie o QR Code para compartilhar os melhores momentos da festa!
+            📸🎉
+          </p>
+        )}
       </div>
     );
   }
