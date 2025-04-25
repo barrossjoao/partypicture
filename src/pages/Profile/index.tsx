@@ -73,8 +73,9 @@ const ProfilePage: React.FC = () => {
     <>
       {contextHolder}
       <div className={styles.container}>
+      <Title level={3}>Perfil</Title>
+
         <div className={styles.formCard}>
-          <Title level={3}>Perfil</Title>
 
           <Form
             form={form}

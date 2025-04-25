@@ -72,6 +72,14 @@ const AppRoutes: React.FC = () => {
               </PrivateRoute>
             }
           />
+                              <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/create-user"
             element={
@@ -104,14 +112,7 @@ const AppRoutes: React.FC = () => {
               </PrivateRoute>
             }
           />
-                    <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
+
                     <Route
             path="/edit-event/:eventId"
             element={

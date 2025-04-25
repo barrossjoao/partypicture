@@ -159,7 +159,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         >
           Criar Empresa
         </Menu.Item>
-        <Menu.Item
+
+        </>
+        )}
+                <Menu.Item
           key="5"
           icon={<FiUser size={18} />}
           onClick={() => navigate("/profile")}
@@ -167,8 +170,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         >
           Profile
         </Menu.Item>
-        </>
-        )}
         <Menu.Item
           key="6"
           icon={<TbLogout2 size={17} />}
