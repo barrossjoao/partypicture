@@ -80,4 +80,16 @@ export const deleteUser = async (id: string): Promise<void> => {
   }
 }
 
+export const changeUserPassword = async (newPassword: string) => {
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 

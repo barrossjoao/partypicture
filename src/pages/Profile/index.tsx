@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Typography, notification } from "antd";
 import styles from "./styles.module.css";
 import { useUser } from "../../context/UserContext";
-import { getUserById, updateUserProfile } from "../../api/Users"; 
+import {
+  changeUserPassword,
+  getUserById,
+  updateUserProfile,
+} from "../../api/Users";
 const { Title } = Typography;
 
 interface User {
@@ -49,20 +53,29 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
-  const onFinish = async (values: { name: string; email: string }) => {
+  const onFinish = async (values: {
+    name: string;
+    email: string;
+    newPassword?: string;
+  }) => {
     if (!userData) return;
 
     setLoading(true);
     try {
       await updateUserProfile(userData.id, values.name, values.email);
 
+      if (values.newPassword) {
+        await changeUserPassword(values.newPassword);
+      }
+
       api.success({
         message: "Perfil atualizado com sucesso!",
       });
-    } catch {
+    } catch (error) {
+      console.error(error);
       api.error({
         message: "Erro ao atualizar",
-        description: "Não foi possível atualizar o perfil.",
+        description: "Não foi possível atualizar o perfil ou senha.",
       });
     } finally {
       setLoading(false);
@@ -73,10 +86,9 @@ const ProfilePage: React.FC = () => {
     <>
       {contextHolder}
       <div className={styles.container}>
-      <Title level={3}>Perfil</Title>
+        <Title level={3}>Perfil</Title>
 
         <div className={styles.formCard}>
-
           <Form
             form={form}
             layout="vertical"
@@ -100,6 +112,20 @@ const ProfilePage: React.FC = () => {
               rules={[{ required: true, message: "Informe o e-mail" }]}
             >
               <Input type="email" placeholder="Seu e-mail" />
+            </Form.Item>
+
+            <Form.Item
+              label="Nova senha"
+              name="newPassword"
+              rules={[
+                { required: true, message: "Informe a nova senha" },
+                {
+                  min: 6,
+                  message: "A nova senha deve ter pelo menos 6 caracteres",
+                },
+              ]}
+            >
+              <Input.Password placeholder="Nova senha" />
             </Form.Item>
 
             <Form.Item>
