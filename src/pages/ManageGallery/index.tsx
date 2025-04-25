@@ -189,7 +189,7 @@ const ManageGallery: React.FC = () => {
                   <Tooltip title="Excluir foto da galeria">
                     <Button
                       danger
-                      type="default"
+                      type="primary"
                       icon={<FaTrash />}
                       size="middle"
                     >
