@@ -90,7 +90,7 @@ const Login: React.FC = () => {
             <div className={styles.boxImage}>
               <img className={styles.img} src="/login.png" alt="Login" />
               <h1 className={styles.titleLogin}>
-                &middot; Galeria &middot;
+                &middot; FotoShare &middot;
               </h1>
               <h3 className={styles.subtitle}>Envie e veja as fotos da festa em tempo real! Compartilhe os cliques do grande dia 📷</h3>
             </div>
