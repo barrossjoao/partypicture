@@ -379,7 +379,7 @@ const GalleryPage: React.FC = () => {
             boxShadow: "0 0 10px rgba(0,0,0,0.5)",
           }}
         >
-          <QRCode value={uploadUrl} size={80} />
+          <QRCode value={uploadUrl} size={150} />
         </div>
       )}
     </div>
