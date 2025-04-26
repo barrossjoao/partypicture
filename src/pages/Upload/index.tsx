@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Upload, Button, Typography, Spin, notification } from "antd";
-import type { UploadProps } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../../api/supabaseClient";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,7 +8,9 @@ import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import imageCompression from "browser-image-compression";
 import styles from "./styles.module.css";
 import { BsMoon, BsSun } from "react-icons/bs";
+import html2canvas from "html2canvas";
 import { getEventBySlug } from "../../api/Events";
+
 const { Title } = Typography;
 
 const UploadPage: React.FC = () => {
@@ -17,10 +18,14 @@ const UploadPage: React.FC = () => {
   const [eventId, setEventId] = useState<string | null>(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventName, setEventName] = useState<string | null>(null);
+  const [eventDate, setEventDate] = useState<string | null>(null);
   const { slug } = useParams();
   const [api, contextHolder] = notification.useNotification();
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const navigate = useNavigate();
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
@@ -28,22 +33,40 @@ const UploadPage: React.FC = () => {
 
   const fetchEvent = async () => {
     if (!slug) return;
-  
+
     const data = await getEventBySlug(slug);
-  
+
     if (!data) {
       navigate("/404");
       return;
     }
-  
+
     setEventId(data.id);
     setEventName(data.name);
+    setEventDate(data.event_date ?? null);
     setLoadingEvent(false);
+  };
+
+  const downloadPolaroidImage = async () => {
+    const polaroidElement = document.getElementById("polaroid-preview");
+    if (!polaroidElement) return;
+
+    const canvas = await html2canvas(polaroidElement, {
+      useCORS: true,
+      backgroundColor: "#e9e9e9",
+    });
+
+    const dataUrl = canvas.toDataURL("image/png");
+
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = "polaroid.png";
+    link.click();
   };
 
   useEffect(() => {
     fetchEvent();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const handleImage = async (file: File): Promise<File> => {
@@ -56,58 +79,62 @@ const UploadPage: React.FC = () => {
     return await imageCompression(file, options);
   };
 
-  const handleUpload: UploadProps["customRequest"] = async ({
-    file,
-    onSuccess,
-    onError,
-  }) => {
-    if (!eventId) return;
+  const handleBeforeUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSelectedImage(reader.result as string);
+      setSelectedFile(file);
+    };
+    reader.readAsDataURL(file);
+
+    return false; 
+  };
+
+  const confirmUpload = async () => {
+    if (!selectedFile || !eventId) return;
 
     setUploading(true);
-    const typedFile = file as File;
-    const fileName = `${uuidv4()}-${typedFile.name}`;
 
-    const compressedFile = await handleImage(typedFile);
+    try {
+      const compressedFile = await handleImage(selectedFile);
+      const fileName = `${uuidv4()}-${selectedFile.name}`;
 
-    const { error } = await supabase.storage
-      .from("event-photos")
-      .upload(fileName, compressedFile);
+      const { error: uploadError } = await supabase.storage
+        .from("event-photos")
+        .upload(fileName, compressedFile);
 
-    if (error) {
-      api.error({
-        message: "Erro ao fazer upload",
-        description: "Tente novamente em instantes.",
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const publicUrl = supabase.storage
+        .from("event-photos")
+        .getPublicUrl(fileName).data.publicUrl;
+
+      const { error: insertError } = await supabase.from("photos").insert({
+        event_id: eventId,
+        image_url: publicUrl,
       });
-      onError?.(error);
-      setUploading(false);
-      return;
-    }
 
-    const publicUrl = supabase.storage
-      .from("event-photos")
-      .getPublicUrl(fileName).data.publicUrl;
+      if (insertError) {
+        throw insertError;
+      }
 
-    const { error: insertError } = await supabase.from("photos").insert({
-      event_id: eventId,
-      image_url: publicUrl,
-    });
-
-    if (insertError) {
-      api.error({
-        message: "Erro ao salvar a imagem",
-        description: "Tente novamente em instantes.",
+      api.success({
+        message: "Upload concluído",
+        description: "Sua imagem foi enviada com sucesso!",
       });
-      onError?.(insertError);
-      setUploading(false);
-      return;
-    }
 
-    api.success({
-      message: "Upload concluído",
-      description: "Sua imagem foi enviada com sucesso!",
-    });
-    onSuccess?.({});
-    setUploading(false);
+      setSelectedFile(null);
+      setSelectedImage(null);
+    } catch {
+      api.error({
+        message: "Erro ao enviar imagem",
+        description: "Tente novamente.",
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (loadingEvent) {
@@ -136,6 +163,7 @@ const UploadPage: React.FC = () => {
             icon={darkMode ? <BsSun /> : <BsMoon />}
           />
         </div>
+
         <div className={styles.card}>
           <Title level={3} className={styles.title}>
             Envie sua foto da festa 🎉
@@ -143,40 +171,81 @@ const UploadPage: React.FC = () => {
             <span className={styles.subtitle}>{eventName}</span>
           </Title>
 
-          <div className={styles.buttonGroup}>
-            <Upload
-              customRequest={handleUpload}
-              showUploadList={false}
-              accept="image/*"
-            >
-              <Button
-                icon={<MdOutlineDriveFolderUpload />}
-                loading={uploading}
-                disabled={uploading}
-                type="primary"
-                size="large"
-              >
-                Enviar Imagem da Galeria
-              </Button>
-            </Upload>
+          {selectedImage && (
+            <>
+              <div id="polaroid-preview" className={styles.polaroidWrapper}>
+                <img
+                  src={selectedImage}
+                  alt="Preview"
+                  className={styles.polaroidImage}
+                />
+                <span className={styles.polaroidText}>
+                  {eventName} <br />
+                  {eventDate
+                    ? new Date(eventDate).toLocaleDateString("pt-BR")
+                    : ""}
+                </span>
+              </div>
 
-            <Upload
-              customRequest={handleUpload}
-              showUploadList={false}
-              accept="image/*"
-              capture="environment"
-            >
-              <Button
-                icon={<IoMdCamera />}
-                loading={uploading}
-                disabled={uploading}
-                type="default"
-                size="large"
+              <div
+                style={{
+                  marginTop: 16,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
-                Tirar Foto com a Câmera
-              </Button>
-            </Upload>
-          </div>
+                <Button
+                  type="primary"
+                  onClick={confirmUpload}
+                  loading={uploading}
+                  style={{ marginBottom: 8 }}
+                >
+                  Confirmar Envio
+                </Button>
+                <Button type="default" onClick={downloadPolaroidImage}>
+                  Baixar Polaroid
+                </Button>
+              </div>
+            </>
+          )}
+
+          {!selectedImage && (
+            <div className={styles.buttonGroup}>
+              <Upload
+                beforeUpload={handleBeforeUpload}
+                showUploadList={false}
+                accept="image/*"
+              >
+                <Button
+                  icon={<MdOutlineDriveFolderUpload />}
+                  loading={uploading}
+                  disabled={uploading}
+                  type="primary"
+                  size="large"
+                >
+                  Enviar Imagem da Galeria
+                </Button>
+              </Upload>
+
+              <Upload
+                beforeUpload={handleBeforeUpload}
+                showUploadList={false}
+                accept="image/*"
+                capture="environment"
+              >
+                <Button
+                  icon={<IoMdCamera />}
+                  loading={uploading}
+                  disabled={uploading}
+                  type="default"
+                  size="large"
+                >
+                  Tirar Foto com a Câmera
+                </Button>
+              </Upload>
+            </div>
+          )}
         </div>
       </div>
     </>
