@@ -10,7 +10,7 @@ import styles from "./styles.module.css";
 import { BsMoon, BsSun } from "react-icons/bs";
 import html2canvas from "html2canvas";
 import { getEventBySlug } from "../../api/Events";
-
+import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa6";
 const { Title } = Typography;
 
 const UploadPage: React.FC = () => {
@@ -69,6 +69,51 @@ const UploadPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
+  const sharePolaroidImageFile = async () => {
+    const polaroidElement = document.getElementById("polaroid-preview");
+    if (!polaroidElement) return;
+
+    try {
+      const canvas = await html2canvas(polaroidElement, {
+        useCORS: true,
+        backgroundColor: "#e9e9e9",
+      });
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob((b) => resolve(b), "image/png")
+      );
+
+      if (!blob) {
+        throw new Error("Erro ao gerar imagem para compartilhamento");
+      }
+
+      const file = new File([blob], "polaroid.png", { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Minha Polaroid",
+          text: "Confira minha foto da festa! 🎉",
+        });
+      } else {
+        alert("Compartilhamento de arquivos não suportado neste navegador.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao compartilhar polaroid. Tente novamente.");
+    }
+  };
+
+  const openInstagram = () => {
+    window.location.href = "instagram://camera";
+
+    setTimeout(() => {
+      alert(
+        "Se o app Instagram não abriu, verifique se está instalado no seu celular."
+      );
+    }, 3000);
+  };
+
   const handleImage = async (file: File): Promise<File> => {
     const options = {
       maxSizeMB: 1,
@@ -87,7 +132,7 @@ const UploadPage: React.FC = () => {
     };
     reader.readAsDataURL(file);
 
-    return false; 
+    return false;
   };
 
   const confirmUpload = async () => {
@@ -206,6 +251,70 @@ const UploadPage: React.FC = () => {
                 <Button type="default" onClick={downloadPolaroidImage}>
                   Baixar Polaroid
                 </Button>
+                <div
+                  style={{
+                    marginTop: 16,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: "8px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    style={{
+                      marginTop: 16,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      gap: "12px",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <Button
+                      type="default"
+                      shape="circle"
+                      size="large"
+                      onClick={sharePolaroidImageFile}
+                      style={{
+                        backgroundColor: "#25D366", 
+                        border: "none",
+                      }}
+                    >
+                      <FaWhatsapp
+                        style={{ color: "#fff", fontSize: 24 }}
+                      />
+                    </Button>
+
+                    <Button
+                      type="default"
+                      shape="circle"
+                      size="large"
+                      onClick={sharePolaroidImageFile}
+                      style={{
+                        backgroundColor: "#1877F2", 
+                        border: "none",
+                      }}
+                    >
+                      <FaFacebook
+                        style={{ color: "#fff", fontSize: 24 }}
+                      />
+                    </Button>
+
+                    <Button
+                      type="default"
+                      shape="circle"
+                      size="large"
+                      onClick={openInstagram}
+                      style={{
+                        backgroundColor: "#E1306C",
+                        border: "none",
+                      }}
+                    >
+                      <FaInstagram style={{ color: "#fff", fontSize: 24 }} />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </>
           )}
