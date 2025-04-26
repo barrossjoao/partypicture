@@ -60,7 +60,7 @@ const ManageGallery: React.FC = () => {
             hidden: !photo.visible,
           }));
           setPhotos(parsed);
-        }else {
+        } else {
           console.log("Nenhuma foto encontrada.");
         }
       } catch (error) {
@@ -116,38 +116,61 @@ const ManageGallery: React.FC = () => {
                 height: "100%",
               }}
             >
-              <img
-                src={photo.image_url}
-                alt={`Foto ${photo.id}`}
-                style={{
-                  width: "100%",
-                  height: "260px",
-                  objectFit: "cover",
-                  opacity: photo.hidden ? 0.3 : 1,
-                  transition: "opacity 0.3s",
-                }}
-              />
+              <div
+                style={{ position: "relative", width: "100%", height: "260px" }}
+              >
+                <img
+                  src={photo.image_url}
+                  alt={`Foto ${photo.id}`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    opacity: photo.hidden ? 0.3 : 1,
+                    transition: "opacity 0.3s",
+                  }}
+                />
+                {photo.hidden && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#fff",
+                      fontSize: 24,
+                      fontWeight: "bold",
+                      backgroundColor: "rgba(0, 0, 0, 0.4)",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    OCULTA
+                  </div>
+                )}
+              </div>
               <div
                 style={{
                   padding: "12px",
+                  borderRadius: "8px",
                   display: "flex",
-                  flexDirection: "column",
-                  gap: "8px",
                   alignItems: "center",
+                  justifyContent: "center",
+                  gap: "4px",
                 }}
               >
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
+                  style={{ display: "flex", alignItems: "center", gap: "3px",}}
                 >
                   <span style={{ fontSize: 14, color: "#555" }}>
-                    Exibir na galeria
+                    {photo.hidden ? "Oculta" : "Visível"}
                   </span>
                   <Switch
                     checked={!photo.hidden}
+                    size="small"
                     onChange={async (checked) => {
                       const updated = await updatePhotoVisibility(
                         photo.id,
@@ -189,9 +212,14 @@ const ManageGallery: React.FC = () => {
                   <Tooltip title="Excluir foto da galeria">
                     <Button
                       danger
-                      type="default"
+                      type="text"
                       icon={<FaTrash />}
-                      size="middle"
+                      size="small"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                      }}
                     >
                       Excluir
                     </Button>

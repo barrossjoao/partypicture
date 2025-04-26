@@ -10,11 +10,12 @@ import {
   Select,
   notification,
   Pagination,
+  Button,
 } from "antd";
 import { Link } from "react-router-dom";
 import { getEventsByCompanyId } from "../../api/Events";
 import { useUser } from "../../context/UserContext";
-import { FiDownload, FiImage, FiUpload } from "react-icons/fi";
+import { FiCopy, FiDownload, FiImage, FiUpload } from "react-icons/fi";
 import { BiQrScan } from "react-icons/bi";
 import { downloadPhotosAsZip } from "../../utils/exportAllPhotos";
 import { getPhotosByEventId } from "../../api/Photos";
@@ -136,9 +137,6 @@ const Home: React.FC = () => {
                     </div>
                   }
                 >
-                  <p>
-                    <strong>URL:</strong> {event.slug}
-                  </p>
                   <Row gutter={[8, 12]}>
                     <Col span={12}>
                       <Link to={`/upload/${event.slug}`}>
@@ -163,6 +161,38 @@ const Home: React.FC = () => {
                         <FiImage style={{ marginRight: 8 }} />
                         Editar Galeria
                       </Link>
+                    </Col>
+                    <Col span={12}>
+                      <Button
+                        type="link"
+                        icon={<FiCopy />}
+                        onClick={async () => {
+                          try {
+                            const link = `${window.location.origin}/gallery/${event.slug}`;
+                            await navigator.clipboard.writeText(link);
+                            api.success({
+                              message: "Link copiado!",
+                              description:
+                                "O link da galeria foi copiado para a área de transferência.",
+                            });
+                          } catch {
+                            api.error({
+                              message: "Erro ao copiar link",
+                              description:
+                                "Não foi possível copiar o link para a área de transferência.",
+                            });
+                          }
+                        }}
+                        style={{
+                          padding: 0,
+                          height: "auto",
+                          wordBreak: "break-word", 
+                          whiteSpace: "normal",    
+                          textAlign: "left",    
+                        }}
+                      >
+                        Copiar Link da Galeria
+                      </Button>
                     </Col>
                     <Col span={12}>
                       <a
