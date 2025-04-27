@@ -20,6 +20,43 @@ export interface CreateEvent {
   custom_description?: string;
 }
 
+export type EventGetBy = 'id' | 'slug';
+export type EventsGetBy = 'company_id' | 'event_date' | 'name';
+
+export const getEventBy = async (search: EventGetBy, value: string) => {
+  const { data, error } = await supabase
+    .from("events")
+    .select(
+      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
+    )
+    .eq(search, value)
+    .single();
+
+  if (error) {
+    console.error("Error fetching event by search:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export const getEventsBy = async (search: EventsGetBy, value: string) => {
+  const { data, error } = await supabase
+    .from("events")
+    .select(
+      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
+    )
+    .eq(search, value)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching events by search:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 export const getEvents = async (): Promise<Events[]> => {
   const { data, error } = await supabase
     .from("events")
@@ -28,25 +65,6 @@ export const getEvents = async (): Promise<Events[]> => {
 
   if (error) {
     console.error("Error fetching events:", error);
-    return [];
-  }
-
-  return data || [];
-};
-
-export const getEventsByCompanyId = async (
-  companyId: string
-): Promise<Events[]> => {
-  const { data, error } = await supabase
-    .from("events")
-    .select(
-      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
-    )
-    .eq("company_id", companyId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching events by company ID:", error);
     return [];
   }
 
@@ -105,23 +123,6 @@ export const generateUniqueSlug = async (name: string): Promise<string> => {
   }
 
   return attempt;
-};
-
-export const getEventBySlug = async (slug: string): Promise<Events | null> => {
-  const { data, error } = await supabase
-    .from("events")
-    .select(
-      "id, name, slug, upload_url, created_at, company_id, event_date, custom_description"
-    )
-    .eq("slug", slug)
-    .single();
-
-  if (error || !data) {
-    console.error("Erro ao buscar evento por slug:", error);
-    return null;
-  }
-
-  return data;
 };
 
 export const updateEvent = async (

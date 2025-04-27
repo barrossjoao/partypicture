@@ -9,8 +9,8 @@ import {
   getTimeConfigEventByEventId,
 } from "../../api/EventsConfig";
 import { getPhotosVisibleByEventId } from "../../api/Photos";
-import { getEventBySlug } from "../../api/Events";
 import styles from "./styles.module.css";
+import { getEventBy } from "../../api/Events";
 
 interface Photo {
   id: string;
@@ -157,7 +157,7 @@ const GalleryPage: React.FC = () => {
     const loadEventData = async () => {
       if (!slug) return;
 
-      const eventData = await getEventBySlug(slug);
+      const eventData = await getEventBy('slug', slug);
       if (!eventData) {
         navigate("/404");
         return;

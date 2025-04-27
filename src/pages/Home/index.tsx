@@ -13,7 +13,7 @@ import {
   Button,
 } from "antd";
 import { Link } from "react-router-dom";
-import { getEventsByCompanyId } from "../../api/Events";
+import { getEventsBy } from "../../api/Events";
 import { useUser } from "../../context/UserContext";
 import { FiCopy, FiDownload, FiImage, FiUpload } from "react-icons/fi";
 import { BiQrScan } from "react-icons/bi";
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
       const fetchEvents = async () => {
         try {
           setLoading(true);
-          const data = await getEventsByCompanyId(user.company_id);
+          const data = await getEventsBy('company_id', user.company_id);
           setEvents(data);
           setFilteredEvents(data);
         } catch (error) {

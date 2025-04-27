@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Spin } from "antd";
 import QRCode from "react-qr-code";
-import { Events, getEvents } from "../../api/Events";
+import { Events, getEventBy } from "../../api/Events";
 import {
   FacebookShareButton,
   WhatsappShareButton,
@@ -23,8 +23,11 @@ const QRCodePage: React.FC = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-      const allEvents = await getEvents();
-      const found = allEvents.find((e) => e.slug === slug);
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
+      const found = await getEventBy('slug', slug);
       setEvent(found || null);
       setLoading(false);
     };

@@ -9,7 +9,7 @@ import imageCompression from "browser-image-compression";
 import styles from "./styles.module.css";
 import { BsMoon, BsSun } from "react-icons/bs";
 import html2canvas from "html2canvas";
-import { getEventBySlug } from "../../api/Events";
+import { getEventBy } from "../../api/Events";
 
 const { Title } = Typography;
 
@@ -34,7 +34,7 @@ const UploadPage: React.FC = () => {
   const fetchEvent = async () => {
     if (!slug) return;
 
-    const data = await getEventBySlug(slug);
+    const data = await getEventBy('slug', slug);
 
     if (!data) {
       navigate("/404");
