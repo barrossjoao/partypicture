@@ -10,6 +10,8 @@ import styles from "./styles.module.css";
 import { BsMoon, BsSun } from "react-icons/bs";
 import html2canvas from "html2canvas";
 import { getEventBySlug } from "../../api/Events";
+import { FaCheckCircle } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa6";
 
 const { Title } = Typography;
 
@@ -87,7 +89,7 @@ const UploadPage: React.FC = () => {
     };
     reader.readAsDataURL(file);
 
-    return false; 
+    return false;
   };
 
   const confirmUpload = async () => {
@@ -191,20 +193,26 @@ const UploadPage: React.FC = () => {
                 style={{
                   marginTop: 16,
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
+                  justifyContent: "center",
+                  gap: 16,
                 }}
               >
                 <Button
                   type="primary"
                   onClick={confirmUpload}
                   loading={uploading}
-                  style={{ marginBottom: 8 }}
+                  icon={<FaCheckCircle />}
                 >
                   Confirmar Envio
                 </Button>
-                <Button type="default" onClick={downloadPolaroidImage}>
-                  Baixar Polaroid
+
+                <Button
+                  type="default"
+                  onClick={downloadPolaroidImage}
+                  icon={<FaDownload />}
+                >
+                  Download da Foto
                 </Button>
               </div>
             </>
