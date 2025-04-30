@@ -1,0 +1,147 @@
+.section {
+  padding: 6rem 1rem;
+  background: linear-gradient(to bottom right, #6b21a8, #312e81);
+  color: white;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .heading {
+    font-size: 2.5rem;
+  }
+}
+
+.subheading {
+  font-size: 1.125rem;
+  color: #e9d5ff;
+  margin-bottom: 2rem;
+  max-width: 768px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricingBox {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.cardBasic,
+.cardPremium {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+}
+
+.cardPremium {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.mostPopular {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fb7185;
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.cardSubtitle {
+  color: #ddd6fe;
+  margin-bottom: 1rem;
+}
+
+.cardPrice {
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.cardPriceUnit {
+  font-size: 0.875rem;
+  font-weight: normal;
+}
+
+.cardFeatures {
+  text-align: left;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.cardFeatures li {
+  display: flex;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.cardFeatures span {
+  margin-right: 0.5rem;
+}
+
+.ctaButton {
+  padding: 1rem 2rem;
+  background-color: #fb7185;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 1.125rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .ctaButton {
+    width: auto;
+  }
+}
+
+.ctaButton:hover {
+  background-color: #f43f5e;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}

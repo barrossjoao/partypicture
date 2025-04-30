@@ -1,0 +1,178 @@
+.section {
+  padding: 5rem 1rem;
+  background-color: white;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #4b5563;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.timelineWrapper {
+  position: relative;
+}
+
+.line {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .line {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background-color: #e5e7eb;
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+}
+
+.timeline {
+  position: relative;
+  z-index: 10;
+}
+
+.stepRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .stepRow {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.imageCol,
+.textCol {
+  flex: 1;
+}
+
+.imageBox {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+}
+
+.iconCol {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .iconCol {
+    display: flex;
+    width: 4rem;
+    height: 100%;
+  }
+}
+
+.iconCircle {
+  padding: 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.icon {
+  height: 2rem;
+  width: 2rem;
+  color: white;
+}
+
+.mobileTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.mobileStepTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-left: 1rem;
+}
+.rowReverse {
+  flex-direction: row-reverse;
+}
+
+@media (min-width: 768px) {
+  .mobileTitle {
+    display: none;
+  }
+}
+
+.stepTitle {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .stepTitle {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.stepDescription {
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.purple {
+  background-color: #9333ea;
+}
+
+.indigo {
+  background-color: #4f46e5;
+}
+
+.blue {
+  background-color: #2563eb;
+}
+
+.coral {
+  background-color: #fb7185;
+}

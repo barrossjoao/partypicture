@@ -1,0 +1,276 @@
+.section {
+  position: relative;
+  background: linear-gradient(to bottom right, #4c1d95, #3730a3);
+  color: white;
+  overflow: hidden;
+}
+
+.decorTopRight {
+  position: absolute;
+  top: -6rem;
+  right: -6rem;
+  width: 24rem;
+  height: 24rem;
+  background-color: #a855f7;
+  opacity: 0.2;
+  border-radius: 9999px;
+  filter: blur(64px);
+}
+
+.decorMidLeft {
+  position: absolute;
+  top: 50%;
+  left: -6rem;
+  width: 16rem;
+  height: 16rem;
+  background-color: #818cf8;
+  opacity: 0.2;
+  border-radius: 9999px;
+  filter: blur(64px);
+  transform: translateY(-50%);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 5rem 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.leftContent {
+  flex: 1;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 3.75rem;
+  }
+}
+
+.highlight {
+  color: #fb7185;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #ddd6fe;
+  margin-bottom: 2rem;
+  max-width: 32rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .actions {
+    flex-direction: row;
+  }
+}
+
+.primaryButton {
+  background-color: #fb7185;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.primaryButton:hover {
+  background-color: #f43f5e;
+  transform: scale(1.05);
+}
+
+.secondaryButton {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background-color: white;
+  color: #4c1d95;
+}
+
+.rightContent {
+  flex: 1;
+}
+
+.phoneWrapper {
+  max-width: 20rem;
+  margin: 0 auto;
+  position: relative;
+}
+
+.phoneMockup {
+  border-radius: 1.5rem;
+  border: 8px solid #1f2937;
+  background-color: #1f2937;
+  aspect-ratio: 9 / 19;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.phoneBackground {
+  background: linear-gradient(to bottom right, #f3e8ff, #faf5ff);
+  padding: 0.5rem;
+  height: 100%;
+}
+
+.phoneContent {
+  height: 100%;
+  width: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.appUI {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.appHeader {
+  height: 3.5rem;
+  background-color: #6b21a8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.appTitle {
+  color: white;
+  font-weight: 500;
+}
+
+.iconWhite {
+  color: white;
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.gallery {
+  flex: 1;
+  background-color: white;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
+.galleryItem {
+  aspect-ratio: 1 / 1;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.photoPlaceholder {
+  height: 100%;
+  width: 100%;
+  background-color: #ddd6fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconPurple {
+  color: #9333ea;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.floatTopRight,
+.floatBottomLeft {
+  position: absolute;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.floatTopRight {
+  top: -1.5rem;
+  right: -3rem;
+  transform: rotate(6deg);
+}
+
+.floatBottomLeft {
+  bottom: -2rem;
+  left: -4rem;
+  transform: rotate(-6deg);
+}
+
+.floatBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.floatIcon {
+  background-color: #ede9fe;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.floatTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.floatSubtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
