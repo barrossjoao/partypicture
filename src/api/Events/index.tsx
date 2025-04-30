@@ -1,3 +1,4 @@
+ 
 import { supabase } from "../supabaseClient";
 
 export interface Events {
@@ -9,6 +10,10 @@ export interface Events {
   company_id: string;
   event_date?: string;
   custom_description?: string;
+  company?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface CreateEvent {
@@ -20,19 +25,50 @@ export interface CreateEvent {
   custom_description?: string;
 }
 
-export const getEvents = async (): Promise<Events[]> => {
-  const { data, error } = await supabase
+export interface EventsWithCompanyName {
+  id: string;
+  name: string;
+  slug: string;
+  upload_url: string;
+  created_at: string;
+  company_id: string;
+  event_date?: string;
+  custom_description?: string;
+  company: {
+    name: string;
+  } | null;
+}
+
+export const getEvents = async (): Promise<EventsWithCompanyName[]> => {
+  const { data: events, error: eventsError } = await supabase
     .from("events")
-    .select("id, name, slug, upload_url, created_at, company_id, event_date")
+    .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching events:", error);
+  const { data: companies, error: companiesError } = await supabase
+    .from("companies")
+    .select("id, name");
+
+  if (eventsError || companiesError) {
+    console.error("Erro ao buscar eventos ou empresas:", {
+      eventsError,
+      companiesError,
+    });
     return [];
   }
 
-  return data || [];
+  const companyMap = new Map(companies?.map((c) => [c.id, c.name]));
+
+  const enrichedEvents: EventsWithCompanyName[] = (events || []).map((event) => ({
+    ...event,
+    company: companyMap.has(event.company_id)
+      ? { name: companyMap.get(event.company_id)! }
+      : null,
+  }));
+
+  return enrichedEvents;
 };
+
 
 export const getEventsByCompanyId = async (
   companyId: string

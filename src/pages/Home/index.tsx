@@ -13,7 +13,7 @@ import {
   Button,
 } from "antd";
 import { Link } from "react-router-dom";
-import { getEventsByCompanyId } from "../../api/Events";
+import { getEvents, getEventsByCompanyId } from "../../api/Events";
 import { useUser } from "../../context/UserContext";
 import { FiCopy, FiDownload, FiImage, FiUpload } from "react-icons/fi";
 import { BiQrScan } from "react-icons/bi";
@@ -29,6 +29,9 @@ interface Event {
   id: string;
   name: string;
   slug: string;
+  company?: {
+    name: string;
+  } | null;
 }
 
 const Home: React.FC = () => {
@@ -43,11 +46,18 @@ const Home: React.FC = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (user?.company_id) {
+    if (user) {
       const fetchEvents = async () => {
         try {
           setLoading(true);
-          const data = await getEventsByCompanyId(user.company_id);
+          let data: Event[] = [];
+
+          if (user.role === "admin") {
+            data = await getEvents();
+          } else if (user.company_id) {
+            data = await getEventsByCompanyId(user.company_id);
+          }
+
           setEvents(data);
           setFilteredEvents(data);
         } catch (error) {
@@ -134,9 +144,17 @@ const Home: React.FC = () => {
                         {getInitials(event.name)}
                       </Avatar>
                       <Link to={`/edit-event/${event.id}`}>{event.name}</Link>
+
                     </div>
                   }
                 >
+                  <div className={styles.subtitle}>
+                      {user?.role === "admin" && event.company?.name && (
+                        <div style={{ fontSize: 12, color: "#888" }}>
+                          Empresa: {event.company.name}
+                        </div>
+                      )}
+                  </div>
                   <Row gutter={[8, 12]}>
                     <Col span={12}>
                       <Link to={`/upload/${event.slug}`}>
@@ -186,9 +204,9 @@ const Home: React.FC = () => {
                         style={{
                           padding: 0,
                           height: "auto",
-                          wordBreak: "break-word", 
-                          whiteSpace: "normal",    
-                          textAlign: "left",    
+                          wordBreak: "break-word",
+                          whiteSpace: "normal",
+                          textAlign: "left",
                         }}
                       >
                         Copiar Link da Galeria

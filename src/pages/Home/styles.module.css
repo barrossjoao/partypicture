@@ -34,6 +34,13 @@
   flex-wrap: wrap;
 }
 
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+
 @media (max-width: 576px) {
   .actions {
     flex-direction: column;
