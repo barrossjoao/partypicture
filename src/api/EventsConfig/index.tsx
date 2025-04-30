@@ -55,6 +55,42 @@ export const getPolaroidConfigEventByEventId = async (
   return data?.value || null;
 }
 
+export const getAiConfigEventByEventId = async (
+  eventId: string
+): Promise<string | null> => {
+  const { data, error } = await supabase
+    .from("event_configs")
+    .select("value")
+    .eq("event_id", eventId)
+    .eq("config_id", "30bf78df-9800-4d33-8959-a8d0f7c036f6")
+    .single();
+
+  if (error) {
+    console.error("Erro ao buscar configuração de AI do evento:", error);
+    return null;
+  }
+
+  return data?.value || null;
+}
+
+export const updateAiConfigEventByEventId = async (
+  eventId: string,
+  ai: boolean
+): Promise<boolean> => {
+  const { error } = await supabase
+    .from("event_configs")
+    .update({ value: ai.toString() })
+    .eq("event_id", eventId)
+    .eq("config_id", "30bf78df-9800-4d33-8959-a8d0f7c036f6");
+
+  if (error) {
+    console.error("Erro ao atualizar configuração de AI do evento:", error);
+    return false;
+  }
+
+  return true;
+}
+
 export const updatePolaroidConfigEventByEventId = async (
   eventId: string,
   polaroid: boolean

@@ -37,7 +37,12 @@ const ManageGallery: React.FC = () => {
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          const newPhoto = payload.new as Photo;
+          const rawPhoto = payload.new as Photo;
+          const newPhoto: Photo & { hidden: boolean } = {
+            ...rawPhoto,
+            hidden: !rawPhoto.visible,
+          };
+        
           setPhotos((prev) => {
             if (prev.find((p) => p.id === newPhoto.id)) return prev;
             return [...prev, newPhoto];

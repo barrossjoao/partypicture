@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
+  Col,
   Form,
   Input,
+  Row,
   Spin,
   Typography,
   notification,
@@ -17,8 +19,10 @@ import {
   updateEvent,
 } from "../../api/Events";
 import {
+  getAiConfigEventByEventId,
   getPolaroidConfigEventByEventId,
   getTimeConfigEventByEventId,
+  updateAiConfigEventByEventId,
   updatePolaroidConfigEventByEventId,
   updateTimeConfigEventByEventId,
 } from "../../api/EventsConfig";
@@ -57,13 +61,15 @@ const EditEventPage: React.FC = () => {
 
       setEvent(event);
 
-      const [timeConfig, polaroidConfig] = await Promise.all([
+      const [timeConfig, polaroidConfig, aiConfig] = await Promise.all([
         getTimeConfigEventByEventId(eventId || ""),
         getPolaroidConfigEventByEventId(eventId || ""),
+        getAiConfigEventByEventId(eventId || ""),
       ]);
 
       const timeValue = timeConfig ? parseInt(timeConfig) : 5;
       const polaroidValue = polaroidConfig === "true";
+      const aiValue = aiConfig === "true";
 
       form.setFieldsValue({
         name: event.name,
@@ -73,6 +79,7 @@ const EditEventPage: React.FC = () => {
           ? new Date(event.event_date).toISOString().split("T")[0]
           : undefined,
         custom_description: event.custom_description || "",
+        ai: aiValue,
       });
 
       setLoading(false);
@@ -96,6 +103,7 @@ const EditEventPage: React.FC = () => {
     polaroid: boolean;
     event_date: string;
     custom_description: string;
+    ai: boolean;
   }) => {
     if (!eventId) return;
 
@@ -146,6 +154,19 @@ const EditEventPage: React.FC = () => {
         return;
       }
 
+      const aiUpdated = await updateAiConfigEventByEventId(
+        eventId,
+        values.ai
+      );
+
+      if (!aiUpdated) {
+        api.error({
+          message: "Erro ao atualizar configuração de AI",
+          description: "Não foi possível atualizar a configuração de AI.",
+        });
+        return;
+      }
+
       api.success({
         message: "Evento atualizado com sucesso",
       });
@@ -190,9 +211,19 @@ const EditEventPage: React.FC = () => {
                 <Input type="number" placeholder="Ex: 5" min={1} />
               </Form.Item>
 
-              <Form.Item name="polaroid" valuePropName="checked">
-                <Checkbox>Ativar modo Polaroid</Checkbox>
-              </Form.Item>
+              <Row gutter={16}>
+              <Col>
+                <Form.Item name="polaroid" valuePropName="checked">
+                  <Checkbox>Ativar modo Polaroid</Checkbox>
+                </Form.Item>
+              </Col>
+              <Col>
+                <Form.Item name="ai" valuePropName="checked">
+                  <Checkbox>Moderação por Inteligência Artificial</Checkbox>
+                </Form.Item>
+              </Col>
+            </Row>
+
 
               <Form.Item label="Data do Evento" name="event_date">
                 <Input type="date" />

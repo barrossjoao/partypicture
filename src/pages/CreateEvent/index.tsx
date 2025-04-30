@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Input, Typography, notification } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Row,
+  Typography,
+  notification,
+} from "antd";
 import QRCode from "react-qr-code";
 import { useUser } from "../../context/UserContext";
 import { createEvent, generateUniqueSlug } from "../../api/Events";
@@ -21,6 +30,7 @@ const CreateEventPage: React.FC = () => {
     polaroid: boolean;
     event_date: string;
     custom_description: string;
+    ai: boolean;
   }) => {
     setLoading(true);
 
@@ -55,6 +65,12 @@ const CreateEventPage: React.FC = () => {
       event_id: eventData.id,
       config_id: "9857fbfa-8f2b-4486-9a02-aef8d16dd7e9",
       value: values.polaroid ? "true" : "false",
+    });
+
+    await createEventConfig({
+      event_id: eventData.id,
+      config_id: "30bf78df-9800-4d33-8959-a8d0f7c036f6",
+      value: values.ai ? "true" : "false",
     });
 
     api.success({
@@ -93,21 +109,24 @@ const CreateEventPage: React.FC = () => {
               <Input type="number" placeholder="Ex: 5" min={1} />
             </Form.Item>
 
-            <Form.Item name="polaroid" valuePropName="checked">
-              <Checkbox>Ativar modo Polaroid</Checkbox>
-            </Form.Item>
+            <Row gutter={16}>
+              <Col>
+                <Form.Item name="polaroid" valuePropName="checked">
+                  <Checkbox>Ativar modo Polaroid</Checkbox>
+                </Form.Item>
+              </Col>
+              <Col>
+                <Form.Item name="ai" valuePropName="checked">
+                  <Checkbox>Moderação por Inteligência Artificial</Checkbox>
+                </Form.Item>
+              </Col>
+            </Row>
 
-            <Form.Item
-              label="Data do Evento"
-              name="event_date"
-            >
+            <Form.Item label="Data do Evento" name="event_date">
               <Input type="date" />
             </Form.Item>
 
-            <Form.Item
-              label="Descrição do Evento"
-              name="custom_description"
-            >
+            <Form.Item label="Descrição do Evento" name="custom_description">
               <Input placeholder="Ex: Venha participar desse momento único para o Fulano" />
             </Form.Item>
 

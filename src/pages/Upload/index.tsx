@@ -12,6 +12,8 @@ import html2canvas from "html2canvas";
 import { getEventBySlug } from "../../api/Events";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaDownload } from "react-icons/fa6";
+import { checkImageModeration } from "../../api/PhotosModeration";
+import { getAiConfigEventByEventId } from "../../api/EventsConfig";
 
 const { Title } = Typography;
 
@@ -21,6 +23,7 @@ const UploadPage: React.FC = () => {
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventName, setEventName] = useState<string | null>(null);
   const [eventDate, setEventDate] = useState<string | null>(null);
+  const [aiEnabled, setAiEnabled] = useState<boolean>(false);
   const { slug } = useParams();
   const [api, contextHolder] = notification.useNotification();
   const [darkMode, setDarkMode] = useState<boolean>(true);
@@ -46,6 +49,9 @@ const UploadPage: React.FC = () => {
     setEventId(data.id);
     setEventName(data.name);
     setEventDate(data.event_date ?? null);
+    const aiValue = await getAiConfigEventByEventId(data.id);
+    console.log("AI Value:", aiValue);
+    setAiEnabled(aiValue === "true" ? true : false);
     setLoadingEvent(false);
   };
 
@@ -110,13 +116,21 @@ const UploadPage: React.FC = () => {
       }
 
       const publicUrl = supabase.storage
-        .from("event-photos")
-        .getPublicUrl(fileName).data.publicUrl;
+      .from("event-photos")
+      .getPublicUrl(fileName).data.publicUrl;
+    
+      let isVisible = true;
+
+      if (aiEnabled) {
+        isVisible = await checkImageModeration(publicUrl);
+      }
 
       const { error: insertError } = await supabase.from("photos").insert({
         event_id: eventId,
         image_url: publicUrl,
+        visible: isVisible, 
       });
+
 
       if (insertError) {
         throw insertError;
