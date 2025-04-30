@@ -11,7 +11,6 @@ export const checkImageModeration = async (imageUrl: string): Promise<boolean> =
   });
 
   const result = response.data;
-  console.log('Resultado da moderação:', result);
 
   const { nudity, weapon, gore } = result;
 
